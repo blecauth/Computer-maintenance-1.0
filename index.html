@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Flyer</title>
+    <!-- Tailwind CSS para estilização rápida e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
+    <!-- Html2Canvas para converter o HTML em imagem -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilos específicos para o flyer */
+        #flyer-content {
+            background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
+        }
+        /* Estilo para a caixa de mensagem personalizada */
+        #message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 sm:p-8 flex flex-col items-center min-h-screen">
+
+    <!-- Caixa de mensagem para alertas -->
+    <div id="message-box" role="alert" aria-live="polite"></div>
+
+    <!-- Container principal com o botão e o flyer -->
+    <div class="w-full max-w-xl mx-auto flex flex-col items-center">
+
+        <!-- Botão para gerar imagem -->
+        <button id="generate-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105 mb-6">
+            Gerar e Baixar Imagem do Flyer
+        </button>
+
+        <!-- O conteúdo do flyer para ser renderizado -->
+        <div id="flyer-content" class="p-6 sm:p-8 rounded-2xl shadow-xl w-full">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-blue-900 leading-tight mb-2">
+                    💻 Manutenção de Computadores | Rápido e Confiável!
+                </h1>
+                <p class="text-gray-600 text-base sm:text-lg">
+                    Seu computador lento, travando ou com vírus? Nossos serviços de manutenção garantem que sua máquina volte a funcionar com o máximo de desempenho e segurança.
+                </p>
+            </div>
+
+            <hr class="border-t-2 border-gray-300 my-6">
+
+            <!-- Seção de Serviços -->
+            <div class="mb-6">
+                <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4">
+                    🔧 Serviços Essenciais
+                </h3>
+                <ul class="space-y-2 text-gray-700 list-none p-0">
+                    <li class="flex items-start">
+                        <span class="mr-2 text-blue-500 font-bold">●</span>
+                        <div>
+                            <span class="font-semibold text-lg">Formatação e Instalação:</span> Limpeza completa do sistema operacional, remoção de arquivos indesejados e instalação de drivers essenciais.
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2 text-blue-500 font-bold">●</span>
+                        <div>
+                            <span class="font-semibold text-lg">Remoção de Vírus e Malwares:</span> Eliminação de ameaças que comprometem a segurança e o desempenho da sua máquina.
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2 text-blue-500 font-bold">●</span>
+                        <div>
+                            <span class="font-semibold text-lg">Otimização de Sistema:</span> Configurações avançadas para deixar seu computador mais rápido, melhorando o tempo de inicialização e a velocidade de execução de programas.
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2 text-blue-500 font-bold">●</span>
+                        <div>
+                            <span class="font-semibold text-lg">Backup e Recuperação de Dados:</span> Salve seus arquivos importantes e evite a perda de informações em caso de falha.
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <hr class="border-t-2 border-gray-300 my-6">
+
+            <!-- Seção de Vantagens -->
+            <div class="mb-6">
+                <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4">
+                    ✅ Vantagens e Itens Importantes
+                </h3>
+                <ul class="space-y-2 text-gray-700 list-none p-0">
+                    <li class="flex items-start">
+                        <span class="mr-2 text-blue-500 font-bold">●</span>
+                        <div>
+                            <span class="font-semibold text-lg">Atendimento Personalizado:</span> Entendemos a sua necessidade e oferecemos a melhor solução.
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2 text-blue-500 font-bold">●</span>
+                        <div>
+                            <span class="font-semibold text-lg">Orçamento Gratuito:</span> Avaliamos seu equipamento sem custo antes de iniciar qualquer serviço.
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2 text-blue-500 font-bold">●</span>
+                        <div>
+                            <span class="font-semibold text-lg">Peças de Qualidade:</span> Em caso de troca de hardware, trabalhamos apenas com componentes de alta qualidade e com garantia.
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2 text-blue-500 font-bold">●</span>
+                        <div>
+                            <span class="font-semibold text-lg">Suporte Técnico:</span> Oferecemos suporte para tirar suas dúvidas e garantir que tudo esteja funcionando perfeitamente.
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <hr class="border-t-2 border-gray-300 my-6">
+
+            <!-- Seção de Contato -->
+            <div class="text-center">
+                <p class="text-lg sm:text-xl text-gray-700 font-semibold mb-2">
+                    Entre em contato e agende uma avaliação!
+                </p>
+                <p class="text-3xl sm:text-4xl font-extrabold text-blue-700">
+                    📞 (19) 99393-8752
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Função para mostrar uma mensagem customizada
+        function showMessage(message, duration = 3000) {
+            const messageBox = document.getElementById('message-box');
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, duration);
+        }
+
+        // Evento de clique no botão para gerar a imagem
+        document.getElementById('generate-btn').addEventListener('click', () => {
+            const flyerElement = document.getElementById('flyer-content');
+
+            // Exibir mensagem de processamento
+            showMessage('Gerando imagem...', 5000);
+
+            // Usa html2canvas para converter o elemento em um canvas
+            html2canvas(flyerElement, {
+                // Configurações para garantir a qualidade da imagem
+                scale: 2, // Aumenta a escala para uma imagem de alta resolução
+                useCORS: true // Permite o uso de recursos externos (se houver)
+            }).then(canvas => {
+                // Converte o canvas em uma URL de imagem
+                const image = canvas.toDataURL('image/png');
+
+                // Cria um link para download
+                const link = document.createElement('a');
+                link.href = image;
+                link.download = 'flyer-manutencao-computadores.png';
+
+                // Simula um clique no link para iniciar o download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Exibir mensagem de sucesso
+                showMessage('Imagem baixada com sucesso!', 3000);
+            }).catch(error => {
+                // Em caso de erro, exibe uma mensagem de falha no console e na tela
+                console.error('Erro ao gerar a imagem:', error);
+                showMessage('Erro ao gerar a imagem. Tente novamente.');
+            });
+        });
+    </script>
+</body>
+</html>
+
