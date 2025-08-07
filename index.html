@@ -3,193 +3,383 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Flyer</title>
-    <!-- Tailwind CSS para estilização rápida e responsiva -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
-    <!-- Html2Canvas para converter o HTML em imagem -->
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Estilos específicos para o flyer */
-        #flyer-content {
-            background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
-        }
-        /* Estilo para a caixa de mensagem personalizada */
-        #message-box {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #333;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            display: none;
-            text-align: center;
-        }
-    </style>
+    <title>TechFix - Manutenção de Computadores e Notebooks</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-gray-100 p-4 sm:p-8 flex flex-col items-center min-h-screen">
-
-    <!-- Caixa de mensagem para alertas -->
-    <div id="message-box" role="alert" aria-live="polite"></div>
-
-    <!-- Container principal com o botão e o flyer -->
-    <div class="w-full max-w-xl mx-auto flex flex-col items-center">
-
-        <!-- Botão para gerar imagem -->
-        <button id="generate-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105 mb-6">
-            Gerar e Baixar Imagem do Flyer
-        </button>
-
-        <!-- O conteúdo do flyer para ser renderizado -->
-        <div id="flyer-content" class="p-6 sm:p-8 rounded-2xl shadow-xl w-full">
-            <div class="text-center mb-6">
-                <h1 class="text-3xl sm:text-4xl font-extrabold text-blue-900 leading-tight mb-2">
-                    💻 Manutenção de Computadores | Rápido e Confiável!
-                </h1>
-                <p class="text-gray-600 text-base sm:text-lg">
-                    Seu computador lento, travando ou com vírus? Nossos serviços de manutenção garantem que sua máquina volte a funcionar com o máximo de desempenho e segurança.
-                </p>
+<body>
+    <!-- Header com menu simples -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-laptop-code brand-icon"></i>
+                <span class="brand-text">TechFix</span>
             </div>
-
-            <hr class="border-t-2 border-gray-300 my-6">
-
-            <!-- Seção de Serviços -->
-            <div class="mb-6">
-                <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4">
-                    🔧 Serviços Essenciais
-                </h3>
-                <ul class="space-y-2 text-gray-700 list-none p-0">
-                    <li class="flex items-start">
-                        <span class="mr-2 text-blue-500 font-bold">●</span>
-                        <div>
-                            <span class="font-semibold text-lg">Formatação e Instalação:</span> Limpeza completa do sistema operacional, remoção de arquivos indesejados e instalação de drivers essenciais.
-                        </div>
+            
+            <!-- Menu de navegação simples -->
+            <nav class="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#home" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span>Início</span>
+                        </a>
                     </li>
-                    <li class="flex items-start">
-                        <span class="mr-2 text-blue-500 font-bold">●</span>
-                        <div>
-                            <span class="font-semibold text-lg">Remoção de Vírus e Malwares:</span> Eliminação de ameaças que comprometem a segurança e o desempenho da sua máquina.
-                        </div>
+                    <li class="nav-item">
+                        <a href="#services" class="nav-link">
+                            <i class="fas fa-tools"></i>
+                            <span>Serviços</span>
+                        </a>
                     </li>
-                    <li class="flex items-start">
-                        <span class="mr-2 text-blue-500 font-bold">●</span>
-                        <div>
-                            <span class="font-semibold text-lg">Otimização de Sistema:</span> Configurações avançadas para deixar seu computador mais rápido, melhorando o tempo de inicialização e a velocidade de execução de programas.
-                        </div>
+                    <li class="nav-item">
+                        <a href="#advantages" class="nav-link">
+                            <i class="fas fa-star"></i>
+                            <span>Vantagens</span>
+                        </a>
                     </li>
-                    <li class="flex items-start">
-                        <span class="mr-2 text-blue-500 font-bold">●</span>
-                        <div>
-                            <span class="font-semibold text-lg">Backup e Recuperação de Dados:</span> Salve seus arquivos importantes e evite a perda de informações em caso de falha.
-                        </div>
+                    <li class="nav-item">
+                        <a href="#contact" class="nav-link">
+                            <i class="fas fa-phone"></i>
+                            <span>Contato</span>
+                        </a>
                     </li>
                 </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-background">
+                <div class="hero-particles"></div>
             </div>
-
-            <hr class="border-t-2 border-gray-300 my-6">
-
-            <!-- Seção de Vantagens -->
-            <div class="mb-6">
-                <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4">
-                    ✅ Vantagens e Itens Importantes
-                </h3>
-                <ul class="space-y-2 text-gray-700 list-none p-0">
-                    <li class="flex items-start">
-                        <span class="mr-2 text-blue-500 font-bold">●</span>
-                        <div>
-                            <span class="font-semibold text-lg">Atendimento Personalizado:</span> Entendemos a sua necessidade e oferecemos a melhor solução.
-                        </div>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="mr-2 text-blue-500 font-bold">●</span>
-                        <div>
-                            <span class="font-semibold text-lg">Orçamento Gratuito:</span> Avaliamos seu equipamento sem custo antes de iniciar qualquer serviço.
-                        </div>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="mr-2 text-blue-500 font-bold">●</span>
-                        <div>
-                            <span class="font-semibold text-lg">Peças de Qualidade:</span> Em caso de troca de hardware, trabalhamos apenas com componentes de alta qualidade e com garantia.
-                        </div>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="mr-2 text-blue-500 font-bold">●</span>
-                        <div>
-                            <span class="font-semibold text-lg">Suporte Técnico:</span> Oferecemos suporte para tirar suas dúvidas e garantir que tudo esteja funcionando perfeitamente.
-                        </div>
-                    </li>
-                </ul>
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <span class="hero-icon">💻</span>
+                        Manutenção Profissional de Computadores
+                    </h1>
+                    <p class="hero-subtitle">
+                        Transformamos seu equipamento lento em uma máquina de alta performance. 
+                        Serviços especializados com garantia e suporte técnico completo.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#contact" class="btn btn-primary">
+                            <i class="fas fa-phone"></i>
+                            Solicitar Orçamento
+                        </a>
+                        <a href="#services" class="btn btn-secondary">
+                            <i class="fas fa-info-circle"></i>
+                            Nossos Serviços
+                        </a>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <hr class="border-t-2 border-gray-300 my-6">
+        <!-- Services Section -->
+        <section id="services" class="services">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-tools"></i>
+                        Nossos Serviços Especializados
+                    </h2>
+                    <p class="section-subtitle">
+                        Soluções completas para todos os problemas do seu computador ou notebook
+                    </p>
+                </div>
+                
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h3 class="service-title">Formatação e Instalação</h3>
+                        <p class="service-description">
+                            Limpeza completa do sistema operacional, remoção de arquivos indesejados 
+                            e instalação de drivers essenciais para máximo desempenho.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Backup de dados importantes</li>
+                            <li><i class="fas fa-check"></i> Instalação do Windows original</li>
+                            <li><i class="fas fa-check"></i> Drivers atualizados</li>
+                            <li><i class="fas fa-check"></i> Programas essenciais</li>
+                        </ul>
+                    </div>
 
-            <!-- Seção de Contato -->
-            <div class="text-center">
-                <p class="text-lg sm:text-xl text-gray-700 font-semibold mb-2">
-                    Entre em contato e agende uma avaliação!
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="service-title">Remoção de Vírus</h3>
+                        <p class="service-description">
+                            Eliminação completa de vírus, malwares, spywares e outras ameaças 
+                            que comprometem a segurança do seu equipamento.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Scan completo do sistema</li>
+                            <li><i class="fas fa-check"></i> Remoção de malwares</li>
+                            <li><i class="fas fa-check"></i> Proteção antivírus</li>
+                            <li><i class="fas fa-check"></i> Configuração de firewall</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <h3 class="service-title">Otimização de Sistema</h3>
+                        <p class="service-description">
+                            Configurações avançadas para acelerar seu computador, melhorando 
+                            inicialização e velocidade de execução de programas.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Limpeza de arquivos temporários</li>
+                            <li><i class="fas fa-check"></i> Desfragmentação de disco</li>
+                            <li><i class="fas fa-check"></i> Otimização de inicialização</li>
+                            <li><i class="fas fa-check"></i> Ajuste de performance</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3 class="service-title">Backup e Recuperação</h3>
+                        <p class="service-description">
+                            Proteção dos seus dados importantes com backup seguro e recuperação 
+                            de arquivos perdidos ou corrompidos.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Backup automático</li>
+                            <li><i class="fas fa-check"></i> Recuperação de dados</li>
+                            <li><i class="fas fa-check"></i> Armazenamento em nuvem</li>
+                            <li><i class="fas fa-check"></i> Sincronização de arquivos</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <h3 class="service-title">Upgrade de Hardware</h3>
+                        <p class="service-description">
+                            Melhoria de componentes como memória RAM, SSD, placa de vídeo 
+                            para aumentar significativamente a performance.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Análise de compatibilidade</li>
+                            <li><i class="fas fa-check"></i> Instalação de SSD</li>
+                            <li><i class="fas fa-check"></i> Upgrade de memória</li>
+                            <li><i class="fas fa-check"></i> Peças com garantia</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-laptop"></i>
+                        </div>
+                        <h3 class="service-title">Manutenção de Notebooks</h3>
+                        <p class="service-description">
+                            Serviços especializados para notebooks incluindo limpeza interna, 
+                            troca de tela, teclado e reparo de conectores.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Limpeza interna</li>
+                            <li><i class="fas fa-check"></i> Troca de tela</li>
+                            <li><i class="fas fa-check"></i> Reparo de teclado</li>
+                            <li><i class="fas fa-check"></i> Solda de componentes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advantages Section -->
+        <section id="advantages" class="advantages">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-star"></i>
+                        Por Que Escolher a TechFix?
+                    </h2>
+                    <p class="section-subtitle">
+                        Diferenciais que fazem toda a diferença no atendimento e qualidade
+                    </p>
+                </div>
+
+                <div class="advantages-grid">
+                    <div class="advantage-card">
+                        <div class="advantage-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h3 class="advantage-title">Atendimento Personalizado</h3>
+                        <p class="advantage-description">
+                            Cada cliente é único. Analisamos suas necessidades específicas 
+                            e oferecemos a solução mais adequada para seu perfil de uso.
+                        </p>
+                    </div>
+
+                    <div class="advantage-card">
+                        <div class="advantage-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h3 class="advantage-title">Orçamento Gratuito</h3>
+                        <p class="advantage-description">
+                            Diagnóstico completo sem custo. Avaliamos seu equipamento 
+                            e apresentamos um orçamento detalhado antes de qualquer serviço.
+                        </p>
+                    </div>
+
+                    <div class="advantage-card">
+                        <div class="advantage-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h3 class="advantage-title">Peças de Qualidade</h3>
+                        <p class="advantage-description">
+                            Trabalhamos apenas com componentes originais e de alta qualidade, 
+                            todos com garantia do fabricante e nossa garantia de serviço.
+                        </p>
+                    </div>
+
+                    <div class="advantage-card">
+                        <div class="advantage-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3 class="advantage-title">Suporte Técnico</h3>
+                        <p class="advantage-description">
+                            Suporte contínuo após o serviço. Tiramos suas dúvidas e 
+                            garantimos que tudo esteja funcionando perfeitamente.
+                        </p>
+                    </div>
+
+                    <div class="advantage-card">
+                        <div class="advantage-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3 class="advantage-title">Agilidade no Atendimento</h3>
+                        <p class="advantage-description">
+                            Serviços realizados com rapidez sem comprometer a qualidade. 
+                            Seu tempo é valioso e respeitamos isso.
+                        </p>
+                    </div>
+
+                    <div class="advantage-card">
+                        <div class="advantage-icon">
+                            <i class="fas fa-shield-check"></i>
+                        </div>
+                        <h3 class="advantage-title">Garantia Estendida</h3>
+                        <p class="advantage-description">
+                            Todos os nossos serviços possuem garantia. Caso algo não 
+                            funcione como esperado, corrigimos sem custo adicional.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-phone"></i>
+                        Entre em Contato
+                    </h2>
+                    <p class="section-subtitle">
+                        Agende uma avaliação gratuita e descubra como podemos ajudar
+                    </p>
+                </div>
+
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <h3>WhatsApp</h3>
+                            <p>Atendimento rápido e direto</p>
+                            <a href="https://wa.me/5519993938752" class="contact-link" target="_blank">
+                                (19) 99393-8752
+                            </a>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <h3>Telefone</h3>
+                            <p>Ligue para nós</p>
+                            <a href="tel:+5519993938752" class="contact-link">
+                                (19) 99393-8752
+                            </a>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h3>Horário</h3>
+                            <p>Segunda a Sábado</p>
+                            <span class="contact-link">
+                                08:00 às 18:00
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="contact-cta">
+                        <h3>Pronto para ter um computador mais rápido?</h3>
+                        <p>Entre em contato agora e agende sua avaliação gratuita!</p>
+                        <a href="https://wa.me/5519993938752?text=Olá! Gostaria de agendar uma avaliação gratuita para meu computador." 
+                           class="btn btn-primary btn-large" target="_blank">
+                            <i class="fab fa-whatsapp"></i>
+                            Agendar Avaliação Gratuita
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-laptop-code"></i>
+                    <span>TechFix</span>
+                </div>
+                <p class="footer-text">
+                    Especialistas em manutenção de computadores e notebooks. 
+                    Transformando equipamentos lentos em máquinas de alta performance.
                 </p>
-                <p class="text-3xl sm:text-4xl font-extrabold text-blue-700">
-                    📞 (19) 99393-8752
-                </p>
+                <div class="footer-contact">
+                    <a href="https://wa.me/5519993938752" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                        (19) 99393-8752
+                    </a>
+                </div>
             </div>
+        </div>
+    </footer>
 
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <i class="toast-icon"></i>
+            <span class="toast-message"></span>
         </div>
     </div>
 
-    <script>
-        // Função para mostrar uma mensagem customizada
-        function showMessage(message, duration = 3000) {
-            const messageBox = document.getElementById('message-box');
-            messageBox.textContent = message;
-            messageBox.style.display = 'block';
-            setTimeout(() => {
-                messageBox.style.display = 'none';
-            }, duration);
-        }
-
-        // Evento de clique no botão para gerar a imagem
-        document.getElementById('generate-btn').addEventListener('click', () => {
-            const flyerElement = document.getElementById('flyer-content');
-
-            // Exibir mensagem de processamento
-            showMessage('Gerando imagem...', 5000);
-
-            // Usa html2canvas para converter o elemento em um canvas
-            html2canvas(flyerElement, {
-                // Configurações para garantir a qualidade da imagem
-                scale: 2, // Aumenta a escala para uma imagem de alta resolução
-                useCORS: true // Permite o uso de recursos externos (se houver)
-            }).then(canvas => {
-                // Converte o canvas em uma URL de imagem
-                const image = canvas.toDataURL('image/png');
-
-                // Cria um link para download
-                const link = document.createElement('a');
-                link.href = image;
-                link.download = 'flyer-manutencao-computadores.png';
-
-                // Simula um clique no link para iniciar o download
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                // Exibir mensagem de sucesso
-                showMessage('Imagem baixada com sucesso!', 3000);
-            }).catch(error => {
-                // Em caso de erro, exibe uma mensagem de falha no console e na tela
-                console.error('Erro ao gerar a imagem:', error);
-                showMessage('Erro ao gerar a imagem. Tente novamente.');
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
 
