@@ -1,8 +1,10 @@
 // Aguarda o carregamento completo do DOM
 document.addEventListener('DOMContentLoaded', function() {
     // Elementos do DOM
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navMenu = document.getElementById('navMenu');
+    const mobileOverlay = document.getElementById('mobileOverlay');
     const navLinks = document.querySelectorAll('.nav-link');
-    const navList = document.querySelector('.nav-list');
     const toast = document.getElementById('toast');
     
     // Estado do menu mobile
@@ -43,15 +45,35 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Função para detectar se está em mobile
     function isMobile() {
-        return window.innerWidth <= 768;
+        return window.innerWidth <= 768 || window.matchMedia('(max-width: 768px)').matches;
     }
     
     // Função para abrir o menu mobile
     function openMobileMenu() {
-        if (!isMobile()) return;
+        console.log('Tentando abrir menu mobile...');
+        console.log('isMobile():', isMobile());
+        console.log('window.innerWidth:', window.innerWidth);
         
         isMobileMenuOpen = true;
-        navList.classList.add('active');
+        
+        // Adiciona classes ativas
+        if (mobileMenuBtn) {
+            mobileMenuBtn.classList.add('active');
+            console.log('Botão marcado como ativo');
+        }
+        
+        if (navMenu) {
+            navMenu.classList.add('active');
+            console.log('Menu marcado como ativo');
+        }
+        
+        if (mobileOverlay) {
+            mobileOverlay.classList.add('active');
+            mobileOverlay.style.display = 'block';
+            console.log('Overlay ativado');
+        }
+        
+        // Previne scroll do body
         document.body.style.overflow = 'hidden';
         
         // Adiciona animação aos links do menu
@@ -59,12 +81,30 @@ document.addEventListener('DOMContentLoaded', function() {
             link.style.animationDelay = `${index * 0.1}s`;
             link.style.animation = 'fadeInLeft 0.3s ease-out forwards';
         });
+        
+        // Feedback tátil em dispositivos móveis
+        if ('vibrate' in navigator) {
+            navigator.vibrate(50);
+        }
+        
+        console.log('Menu mobile aberto!');
     }
     
     // Função para fechar o menu mobile
     function closeMobileMenu() {
         isMobileMenuOpen = false;
-        navList.classList.remove('active');
+        
+        // Remove classes ativas
+        mobileMenuBtn.classList.remove('active');
+        navMenu.classList.remove('active');
+        mobileOverlay.classList.remove('active');
+        
+        // Esconde o overlay após a transição
+        setTimeout(() => {
+            mobileOverlay.style.display = 'none';
+        }, 300);
+        
+        // Restaura scroll do body
         document.body.style.overflow = '';
         
         // Remove animações dos links
@@ -83,6 +123,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Event listener para o botão de menu mobile
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleMobileMenu();
+        });
+        
+        // Adiciona efeito de hover no botão
+        mobileMenuBtn.addEventListener('mouseenter', function() {
+            if (!isMobile()) {
+                this.style.transform = 'scale(1.05)';
+            }
+        });
+        
+        mobileMenuBtn.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+        });
+    }
+    
+    // Event listener para o overlay
+    if (mobileOverlay) {
+        mobileOverlay.addEventListener('click', function() {
+            closeMobileMenu();
+        });
+    }
+    
     // Event listeners para os links de navegação
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
@@ -99,6 +166,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Fecha o menu mobile se estiver aberto
                     if (isMobileMenuOpen) {
                         closeMobileMenu();
+                        
+                        // Aguarda o menu fechar antes de fazer scroll
+                        setTimeout(() => {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }, 300);
+                    } else {
+                        // Scroll imediato se o menu não estiver aberto
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
                     }
                     
                     // Remove classe ativa de todos os links
@@ -106,12 +187,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Adiciona classe ativa ao link clicado
                     link.classList.add('active');
-                    
-                    // Scroll suave para o elemento
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
                     
                     // Remove classe ativa após um tempo
                     setTimeout(() => {
@@ -126,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Efeitos de hover aprimorados
+        // Efeitos de hover aprimorados (apenas para desktop)
         link.addEventListener('mouseenter', function() {
             if (!isMobile()) {
                 this.style.transform = 'translateY(-2px) scale(1.05)';
@@ -134,7 +209,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         link.addEventListener('mouseleave', function() {
-            this.style.transform = '';
+            if (!isMobile()) {
+                this.style.transform = '';
+            }
         });
     });
     
@@ -213,6 +290,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.innerWidth > 768 && isMobileMenuOpen) {
             closeMobileMenu();
         }
+        
+        // Atualiza estado do menu baseado no tamanho da tela
+        if (window.innerWidth > 768) {
+            // Desktop: garante que o menu esteja visível
+            navMenu.style.transform = '';
+            navMenu.classList.remove('active');
+            mobileOverlay.style.display = 'none';
+            document.body.style.overflow = '';
+        }
     }
     
     // Event listener para redimensionamento
@@ -267,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Função para adicionar efeitos de hover nos cards
+    // Função para adicionar efeitos de hover nos cards (apenas desktop)
     function initCardEffects() {
         const cards = document.querySelectorAll('.service-card, .advantage-card, .contact-card');
         
@@ -280,8 +366,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             card.addEventListener('mouseleave', function() {
-                this.style.transform = '';
-                this.style.boxShadow = '';
+                if (!isMobile()) {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                }
             });
         });
     }
@@ -312,30 +400,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Função para lazy loading de imagens (se houver)
-    function initLazyLoading() {
-        const images = document.querySelectorAll('img[data-src]');
-        
-        if ('IntersectionObserver' in window && images.length > 0) {
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.classList.remove('lazy');
-                        imageObserver.unobserve(img);
-                    }
-                });
-            });
-            
-            images.forEach(img => imageObserver.observe(img));
-        }
-    }
-    
     // Função para adicionar funcionalidade de clique fora do menu para fechar
     function initClickOutside() {
         document.addEventListener('click', function(e) {
-            if (isMobileMenuOpen && !navList.contains(e.target) && !e.target.closest('.nav-brand')) {
+            if (isMobileMenuOpen && 
+                !navMenu.contains(e.target) && 
+                !mobileMenuBtn.contains(e.target) &&
+                !e.target.closest('.nav-brand')) {
                 closeMobileMenu();
             }
         });
@@ -373,12 +444,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Função para adicionar indicador de carregamento
-    function initLoadingIndicator() {
-        // Remove indicador de carregamento quando a página estiver pronta
-        window.addEventListener('load', function() {
-            document.body.classList.add('loaded');
-        });
+    // Função para adicionar suporte a gestos touch
+    function initTouchGestures() {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+        
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchStartTime = Date.now();
+        }, { passive: true });
+        
+        document.addEventListener('touchend', function(e) {
+            if (!touchStartX || !touchStartY) return;
+            
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const touchEndTime = Date.now();
+            
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
+            const timeDiff = touchEndTime - touchStartTime;
+            
+            // Swipe deve ser rápido (menos de 300ms) e com distância mínima
+            if (timeDiff < 300 && Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (diffX > 0 && isMobileMenuOpen) {
+                    // Swipe left - fechar menu
+                    closeMobileMenu();
+                } else if (diffX < 0 && !isMobileMenuOpen && touchStartX < 50) {
+                    // Swipe right da borda esquerda - abrir menu
+                    openMobileMenu();
+                }
+            }
+            
+            touchStartX = 0;
+            touchStartY = 0;
+            touchStartTime = 0;
+        }, { passive: true });
     }
     
     // Função para otimizar performance em dispositivos móveis
@@ -402,39 +505,57 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Função para adicionar suporte a gestos touch
-    function initTouchGestures() {
-        let touchStartX = 0;
-        let touchStartY = 0;
+    // Função para detectar orientação do dispositivo
+    function handleOrientationChange() {
+        // Fecha o menu quando a orientação muda
+        if (isMobileMenuOpen) {
+            closeMobileMenu();
+        }
         
-        document.addEventListener('touchstart', function(e) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-        }, { passive: true });
+        // Pequeno delay para aguardar a mudança de orientação
+        setTimeout(() => {
+            handleResize();
+        }, 100);
+    }
+    
+    // Event listener para mudança de orientação
+    window.addEventListener('orientationchange', handleOrientationChange);
+    
+    // Função para adicionar indicador de carregamento
+    function initLoadingIndicator() {
+        // Remove indicador de carregamento quando a página estiver pronta
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+    }
+    
+    // Função para melhorar acessibilidade
+    function initAccessibility() {
+        // Adiciona atributos ARIA dinâmicos
+        if (mobileMenuBtn) {
+            mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            mobileMenuBtn.setAttribute('aria-controls', 'navMenu');
+        }
         
-        document.addEventListener('touchend', function(e) {
-            if (!touchStartX || !touchStartY) return;
-            
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            
-            const diffX = touchStartX - touchEndX;
-            const diffY = touchStartY - touchEndY;
-            
-            // Swipe horizontal para abrir/fechar menu
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-                if (diffX > 0 && isMobileMenuOpen) {
-                    // Swipe left - fechar menu
-                    closeMobileMenu();
-                } else if (diffX < 0 && !isMobileMenuOpen && touchStartX < 50) {
-                    // Swipe right da borda esquerda - abrir menu
-                    openMobileMenu();
-                }
-            }
-            
-            touchStartX = 0;
-            touchStartY = 0;
-        }, { passive: true });
+        if (navMenu) {
+            navMenu.setAttribute('aria-hidden', 'true');
+        }
+        
+        // Atualiza atributos quando o menu abre/fecha
+        const originalOpenMenu = openMobileMenu;
+        const originalCloseMenu = closeMobileMenu;
+        
+        openMobileMenu = function() {
+            originalOpenMenu();
+            if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'true');
+            if (navMenu) navMenu.setAttribute('aria-hidden', 'false');
+        };
+        
+        closeMobileMenu = function() {
+            originalCloseMenu();
+            if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            if (navMenu) navMenu.setAttribute('aria-hidden', 'true');
+        };
     }
     
     // Inicializa todas as funcionalidades
@@ -444,14 +565,10 @@ document.addEventListener('DOMContentLoaded', function() {
     initRippleEffect();
     initClickOutside();
     initKeyboardShortcuts();
+    initTouchGestures();
     initLoadingIndicator();
     initMobileOptimizations();
-    initTouchGestures();
-    
-    // Inicializa lazy loading se suportado
-    if ('IntersectionObserver' in window) {
-        initLazyLoading();
-    }
+    initAccessibility();
     
     // Chama handleScroll uma vez para configurar estado inicial
     handleScroll();
@@ -468,6 +585,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.style.setProperty('--transition-fast', '0.01ms');
         document.documentElement.style.setProperty('--transition-normal', '0.01ms');
         document.documentElement.style.setProperty('--transition-slow', '0.01ms');
+    }
+    
+    // Adiciona suporte para PWA (se necessário no futuro)
+    if ('serviceWorker' in navigator) {
+        // Código para service worker pode ser adicionado aqui
     }
 });
 

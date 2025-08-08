@@ -118,7 +118,66 @@ body {
     background-clip: text;
 }
 
-/* Menu de Navegação Simples e Responsivo */
+/* Botão de Menu Mobile */
+.mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    transition: all var(--transition-normal);
+    gap: var(--spacing-xs);
+    min-width: 60px;
+    height: 50px;
+}
+
+.mobile-menu-btn:hover {
+    background: rgba(37, 99, 235, 0.1);
+}
+
+.menu-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 24px;
+    height: 18px;
+    justify-content: center;
+}
+
+.menu-line {
+    width: 100%;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 2px;
+    transition: all var(--transition-normal);
+    transform-origin: center;
+}
+
+.mobile-menu-btn.active .menu-line:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+
+.mobile-menu-btn.active .menu-line:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-btn.active .menu-line:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+.menu-text {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Menu de Navegação */
 .nav-menu {
     display: flex;
     align-items: center;
@@ -159,6 +218,24 @@ body {
 
 .nav-link i {
     font-size: 1rem;
+}
+
+/* Overlay para Mobile */
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.mobile-overlay.active {
+    opacity: 1;
 }
 
 /* Hero Section */
@@ -662,66 +739,602 @@ section {
     color: var(--error-color);
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .nav-list {
-        flex-direction: column;
-        position: fixed;
-        top: 70px;
-        left: 0;
-        right: 0;
-        background: var(--bg-primary);
-        border-top: 1px solid rgba(226, 232, 240, 0.8);
-        box-shadow: var(--shadow-lg);
+/* Responsividade para Resoluções Intermediárias */
+
+/* Breakpoint para telas grandes (1600px e acima) */
+@media screen and (min-width: 1600px) {
+    .container {
+        max-width: 1400px;
+    }
+    
+    .hero-title {
+        font-size: 4.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.8rem;
+    }
+    
+    .section-title {
+        font-size: 3.5rem;
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-2xl);
+    }
+    
+    .advantages-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-2xl);
+    }
+}
+
+/* Breakpoint para resoluções como 1600x720 e similares */
+@media screen and (max-width: 1599px) and (min-width: 1200px) {
+    .container {
+        max-width: 1100px;
+        padding: 0 var(--spacing-lg);
+    }
+    
+    .hero-title {
+        font-size: clamp(3rem, 4vw, 3.5rem);
+    }
+    
+    .hero-subtitle {
+        font-size: clamp(1.2rem, 2vw, 1.4rem);
+    }
+    
+    .hero-buttons {
+        gap: var(--spacing-md);
+    }
+    
+    .btn {
+        padding: var(--spacing-sm) var(--spacing-lg);
+        font-size: 0.95rem;
+    }
+    
+    .section-title {
+        font-size: clamp(2.2rem, 3vw, 2.8rem);
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
+    }
+    
+    .service-card {
         padding: var(--spacing-lg);
-        gap: 0;
-        transform: translateY(-100%);
-        transition: transform var(--transition-normal);
-        z-index: 999;
     }
     
-    .nav-list.active {
-        transform: translateY(0);
+    .advantages-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-lg);
     }
     
-    .nav-item {
-        border-bottom: 1px solid rgba(226, 232, 240, 0.5);
-        width: 100%;
+    .advantage-card {
+        padding: var(--spacing-md);
     }
     
-    .nav-item:last-child {
-        border-bottom: none;
+    .contact-info {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-lg);
+    }
+    
+    .contact-card {
+        padding: var(--spacing-md);
+    }
+    
+    .contact-cta {
+        padding: var(--spacing-xl);
+    }
+    
+    .contact-cta h3 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Breakpoint para telas médias (992px - 1199px) */
+@media screen and (max-width: 1199px) and (min-width: 992px) {
+    .container {
+        max-width: 960px;
+        padding: 0 var(--spacing-md);
+    }
+    
+    .nav-list {
+        gap: var(--spacing-md);
     }
     
     .nav-link {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.9rem;
+    }
+    
+    .hero-title {
+        font-size: clamp(2.5rem, 4vw, 3rem);
+    }
+    
+    .hero-subtitle {
+        font-size: clamp(1.1rem, 2vw, 1.3rem);
+    }
+    
+    .hero-buttons {
+        gap: var(--spacing-sm);
+        flex-direction: row;
+    }
+    
+    .btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: 0.9rem;
+    }
+    
+    .section-title {
+        font-size: clamp(2rem, 3vw, 2.5rem);
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .service-card {
+        padding: var(--spacing-md);
+    }
+    
+    .service-title {
+        font-size: 1.3rem;
+    }
+    
+    .advantages-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .advantage-card {
+        padding: var(--spacing-md);
+    }
+    
+    .advantage-title {
+        font-size: 1.2rem;
+    }
+    
+    .contact-info {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .contact-card {
+        padding: var(--spacing-md);
+    }
+    
+    .contact-cta {
         padding: var(--spacing-lg);
-        justify-content: flex-start;
-        border-radius: 0;
-        font-size: 1.1rem;
-        width: 100%;
+    }
+    
+    .contact-cta h3 {
+        font-size: 1.6rem;
+    }
+}
+
+/* Breakpoint para tablets (769px - 991px) */
+@media screen and (max-width: 991px) and (min-width: 769px) {
+    .container {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .nav-list {
+        gap: var(--spacing-sm);
+    }
+    
+    .nav-link {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.85rem;
+    }
+    
+    .nav-link span {
+        display: none;
+    }
+    
+    .nav-link i {
+        font-size: 1.2rem;
+    }
+    
+    .hero-title {
+        font-size: clamp(2.2rem, 4vw, 2.8rem);
+    }
+    
+    .hero-subtitle {
+        font-size: clamp(1rem, 2vw, 1.2rem);
     }
     
     .hero-buttons {
         flex-direction: column;
         align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+    }
+    
+    .section-title {
+        font-size: clamp(1.8rem, 3vw, 2.2rem);
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .service-card {
+        padding: var(--spacing-md);
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .advantages-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .advantage-card {
+        padding: var(--spacing-sm);
+    }
+    
+    .contact-info {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .contact-card {
+        padding: var(--spacing-md);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .contact-cta {
+        padding: var(--spacing-md);
+    }
+    
+    .contact-cta h3 {
+        font-size: 1.4rem;
+    }
+}
+
+/* Ajustes para resoluções muito baixas (1024x600, netbooks, etc.) */
+@media screen and (max-height: 720px) and (min-width: 769px) {
+    .hero {
+        min-height: 90vh;
+        padding: var(--spacing-lg) 0;
+    }
+    
+    .hero-title {
+        font-size: clamp(2rem, 4vw, 2.5rem);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .hero-subtitle {
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .hero-buttons {
+        gap: var(--spacing-sm);
+    }
+    
+    .btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: 0.9rem;
+    }
+    
+    section {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .section-header {
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    .section-title {
+        font-size: clamp(1.8rem, 3vw, 2.2rem);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .section-subtitle {
+        font-size: 1rem;
+    }
+    
+    .service-card,
+    .advantage-card,
+    .contact-card {
+        padding: var(--spacing-md);
+    }
+    
+    .contact-cta {
+        padding: var(--spacing-md);
+    }
+    
+    .contact-cta h3 {
+        font-size: 1.4rem;
+    }
+}
+
+/* Ajustes específicos para 1600x720 e resoluções panorâmicas baixas */
+@media screen and (max-height: 720px) and (min-width: 1200px) {
+    .header .container {
+        height: 60px;
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .nav-brand {
+        font-size: 1.3rem;
+    }
+    
+    .brand-icon {
+        font-size: 1.8rem;
+    }
+    
+    .nav-link {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.9rem;
+    }
+    
+    .hero {
+        min-height: 85vh;
+        padding: var(--spacing-md) 0;
+    }
+    
+    .hero-content {
+        max-width: 700px;
+    }
+    
+    .hero-title {
+        font-size: clamp(2.5rem, 4vw, 3rem);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .hero-subtitle {
+        font-size: clamp(1.1rem, 2vw, 1.3rem);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .hero-buttons {
+        gap: var(--spacing-md);
+        flex-direction: row;
+    }
+    
+    .btn {
+        padding: var(--spacing-sm) var(--spacing-lg);
+        font-size: 0.95rem;
+    }
+    
+    section {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .section-header {
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    .section-title {
+        font-size: clamp(2rem, 3vw, 2.5rem);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .section-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .service-card {
+        padding: var(--spacing-md);
+    }
+    
+    .service-title {
+        font-size: 1.2rem;
+    }
+    
+    .service-description {
+        font-size: 0.9rem;
+    }
+    
+    .advantages-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .advantage-card {
+        padding: var(--spacing-sm);
+    }
+    
+    .advantage-title {
+        font-size: 1.1rem;
+    }
+    
+    .advantage-description {
+        font-size: 0.9rem;
+    }
+    
+    .contact-info {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .contact-card {
+        padding: var(--spacing-sm);
+    }
+    
+    .contact-card h3 {
+        font-size: 1rem;
+    }
+    
+    .contact-cta {
+        padding: var(--spacing-md);
+    }
+    
+    .contact-cta h3 {
+        font-size: 1.5rem;
+    }
+    
+    .contact-cta p {
+        font-size: 1rem;
+    }
+    
+    .footer {
+        padding: var(--spacing-md) 0;
+    }
+}
+
+/* Ajustes para telas muito largas mas baixas (ultrawide) */
+@media screen and (min-width: 1920px) and (max-height: 1080px) {
+    .container {
+        max-width: 1600px;
+    }
+    
+    .hero-content {
+        max-width: 900px;
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .advantages-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Otimizações para dispositivos com densidade de pixels alta */
+@media screen and (-webkit-min-device-pixel-ratio: 2), 
+       screen and (min-resolution: 192dpi) {
+    .hero-title,
+    .section-title {
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .service-icon,
+    .advantage-icon,
+    .contact-icon {
+        transform: translateZ(0);
+        will-change: transform;
+    }
+}
+
+/* Responsividade Mobile Otimizada */
+@media screen and (max-width: 768px) {
+    /* Mostrar botão de menu mobile */
+    .mobile-menu-btn {
+        display: flex !important;
+    }
+    
+    /* Esconder menu desktop */
+    .nav-menu {
+        position: fixed !important;
+        top: 70px !important;
+        left: 0 !important;
+        right: 0 !important;
+        background: var(--bg-primary) !important;
+        border-top: 1px solid rgba(226, 232, 240, 0.8) !important;
+        box-shadow: var(--shadow-xl) !important;
+        transform: translateY(-100%) !important;
+        transition: transform var(--transition-normal) !important;
+        z-index: 998 !important;
+        max-height: calc(100vh - 70px) !important;
+        overflow-y: auto !important;
+    }
+    
+    .nav-menu.active {
+        transform: translateY(0) !important;
+    }
+    
+    .nav-list {
+        flex-direction: column !important;
+        padding: var(--spacing-lg) !important;
+        gap: 0 !important;
+        width: 100% !important;
+    }
+    
+    .nav-item {
+        width: 100% !important;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.5) !important;
+    }
+    
+    .nav-item:last-child {
+        border-bottom: none !important;
+    }
+    
+    .nav-link {
+        padding: var(--spacing-lg) !important;
+        justify-content: flex-start !important;
+        border-radius: 0 !important;
+        font-size: 1.1rem !important;
+        width: 100% !important;
+        min-height: 60px !important;
+        font-weight: 600 !important;
+    }
+    
+    .nav-link i {
+        font-size: 1.2rem !important;
+        width: 24px !important;
+        text-align: center !important;
+    }
+    
+    .nav-link:hover {
+        background: rgba(37, 99, 235, 0.1) !important;
+        transform: none !important;
+        padding-left: var(--spacing-xl) !important;
+    }
+    
+    /* Ajustes gerais para mobile */
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-md);
     }
     
     .btn {
         width: 100%;
         max-width: 300px;
         justify-content: center;
+        padding: var(--spacing-lg) var(--spacing-xl);
+        font-size: 1rem;
     }
     
     .services-grid {
         grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .service-card {
+        padding: var(--spacing-lg);
     }
     
     .advantages-grid {
         grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .advantage-card {
+        padding: var(--spacing-lg);
     }
     
     .contact-info {
         grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .contact-card {
+        padding: var(--spacing-lg);
     }
     
     .contact-cta {
@@ -739,9 +1352,22 @@ section {
     }
 }
 
+/* Ajustes para telas muito pequenas */
 @media (max-width: 480px) {
     .container {
         padding: 0 var(--spacing-sm);
+    }
+    
+    .header .container {
+        padding: var(--spacing-sm);
+    }
+    
+    .nav-brand {
+        font-size: 1.3rem;
+    }
+    
+    .brand-icon {
+        font-size: 1.8rem;
     }
     
     .hero-title {
@@ -754,12 +1380,67 @@ section {
     
     .section-title {
         font-size: 1.8rem;
+        flex-direction: column;
+        gap: var(--spacing-sm);
     }
     
     .service-card,
     .advantage-card,
     .contact-card {
-        padding: var(--spacing-lg);
+        padding: var(--spacing-md);
+    }
+    
+    .nav-link {
+        font-size: 1rem;
+        padding: var(--spacing-md);
+        min-height: 50px;
+    }
+    
+    .mobile-menu-btn {
+        min-width: 50px;
+        height: 45px;
+    }
+    
+    .menu-text {
+        font-size: 0.7rem;
+    }
+}
+
+/* Ajustes para telas extra pequenas (como alguns smartphones antigos) */
+@media (max-width: 360px) {
+    .nav-brand {
+        font-size: 1.2rem;
+    }
+    
+    .brand-text {
+        display: none;
+    }
+    
+    .mobile-menu-btn {
+        min-width: 45px;
+        height: 40px;
+    }
+    
+    .menu-icon {
+        width: 20px;
+        height: 15px;
+    }
+    
+    .menu-line {
+        height: 2px;
+    }
+    
+    .menu-text {
+        font-size: 0.65rem;
+    }
+    
+    .hero-buttons {
+        gap: var(--spacing-sm);
+    }
+    
+    .btn {
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-size: 0.9rem;
     }
 }
 
@@ -831,7 +1512,8 @@ section {
 
 /* Focus states para acessibilidade */
 .btn:focus,
-.nav-link:focus {
+.nav-link:focus,
+.mobile-menu-btn:focus {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
 }
@@ -860,6 +1542,25 @@ html {
     to {
         transform: scale(4);
         opacity: 0;
+    }
+}
+
+/* Melhorias para dispositivos touch */
+@media (hover: none) and (pointer: coarse) {
+    .nav-link:hover,
+    .btn:hover,
+    .service-card:hover,
+    .advantage-card:hover,
+    .contact-card:hover {
+        transform: none;
+    }
+    
+    .nav-link:active {
+        background: rgba(37, 99, 235, 0.2);
+    }
+    
+    .btn:active {
+        transform: scale(0.98);
     }
 }
 
