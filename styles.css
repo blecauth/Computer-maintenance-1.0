@@ -74,8 +74,8 @@ body {
     --z-dropdown: 1000;
     --z-sticky: 1020;
     --z-fixed: 1030;
-    --z-modal-backdrop: 1040;
-    --z-modal: 1050;
+    --z-modal-backdrop: 9998;
+    --z-modal: 9999;
     --z-popover: 1060;
     --z-tooltip: 1070;
     --z-toast: 1080;
@@ -165,7 +165,7 @@ body {
     padding: 8px;
     border-radius: 8px;
     transition: all var(--transition-normal);
-    z-index: var(--z-modal);
+    z-index: 10000 !important;
     position: relative;
     -webkit-tap-highlight-color: transparent;
 }
@@ -280,7 +280,7 @@ body {
     opacity: 0;
     visibility: hidden;
     transition: all var(--transition-normal);
-    z-index: var(--z-modal-backdrop);
+    z-index: 9998 !important;
 }
 
 .nav-content {
@@ -294,7 +294,7 @@ body {
     box-shadow: var(--shadow-xl);
     transform: translateX(100%);
     transition: transform var(--transition-normal);
-    z-index: var(--z-modal);
+    z-index: 9999 !important;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -541,6 +541,7 @@ body {
 @media screen and (max-width: 768px) {
     .mobile-menu-toggle {
         display: flex !important;
+        z-index: 10000 !important;
     }
     
     .nav-menu {
@@ -550,7 +551,7 @@ body {
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: var(--z-modal);
+        z-index: 9999 !important;
     }
     
     .nav-menu.active {
@@ -575,6 +576,39 @@ body.nav-open {
     overflow: hidden !important;
     position: fixed !important;
     width: 100% !important;
+}
+
+/* ===== CORREÇÃO ESPECÍFICA PARA MENU MOBILE ===== */
+/* Garantir que o menu mobile sempre apareça na frente */
+@media screen and (max-width: 768px) {
+    .nav-menu {
+        z-index: 99999 !important;
+    }
+    
+    .nav-overlay {
+        z-index: 99998 !important;
+    }
+    
+    .nav-content {
+        z-index: 99999 !important;
+    }
+    
+    .mobile-menu-toggle {
+        z-index: 100000 !important;
+    }
+}
+
+/* Forçar z-index alto para todos os elementos do menu mobile */
+.nav-menu.active {
+    z-index: 99999 !important;
+}
+
+.nav-menu.active .nav-overlay {
+    z-index: 99998 !important;
+}
+
+.nav-menu.active .nav-content {
+    z-index: 99999 !important;
 }
 
 /* ===== HERO SECTION ===== */
