@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Header com menu mobile otimizado -->
+    <!-- Header com menu mobile universalmente responsivo -->
     <header class="header">
         <div class="container">
             <div class="nav-brand">
@@ -21,50 +21,66 @@
                 <span class="brand-text">TechFix</span>
             </div>
             
-            <!-- Botão de menu mobile -->
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu de navegação">
-                <span class="menu-icon">
-                    <span class="menu-line"></span>
-                    <span class="menu-line"></span>
-                    <span class="menu-line"></span>
-                </span>
-                <span class="menu-text">Menu</span>
+            <!-- Botão de menu mobile simplificado e robusto -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Abrir menu de navegação" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
             </button>
             
-            <!-- Menu de navegação -->
-            <nav class="nav-menu" id="navMenu">
-                <ul class="nav-list">
-                    <li class="nav-item">
-                        <a href="#home" class="nav-link">
-                            <i class="fas fa-home"></i>
-                            <span>Início</span>
+            <!-- Menu de navegação com overlay completo -->
+            <nav class="nav-menu" id="navMenu" role="navigation">
+                <div class="nav-overlay" id="navOverlay"></div>
+                <div class="nav-content">
+                    <div class="nav-header">
+                        <div class="nav-brand-mobile">
+                            <i class="fas fa-laptop-code brand-icon"></i>
+                            <span class="brand-text">TechFix</span>
+                        </div>
+                        <button class="nav-close" id="navClose" aria-label="Fechar menu">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="#home" class="nav-link" data-section="home">
+                                <i class="fas fa-home nav-icon"></i>
+                                <span class="nav-text">Início</span>
+                                <i class="fas fa-chevron-right nav-arrow"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#services" class="nav-link" data-section="services">
+                                <i class="fas fa-tools nav-icon"></i>
+                                <span class="nav-text">Serviços</span>
+                                <i class="fas fa-chevron-right nav-arrow"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#advantages" class="nav-link" data-section="advantages">
+                                <i class="fas fa-star nav-icon"></i>
+                                <span class="nav-text">Vantagens</span>
+                                <i class="fas fa-chevron-right nav-arrow"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#contact" class="nav-link" data-section="contact">
+                                <i class="fas fa-phone nav-icon"></i>
+                                <span class="nav-text">Contato</span>
+                                <i class="fas fa-chevron-right nav-arrow"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="nav-footer">
+                        <a href="https://wa.me/5519993938752" class="nav-cta" target="_blank">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>Fale Conosco</span>
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#services" class="nav-link">
-                            <i class="fas fa-tools"></i>
-                            <span>Serviços</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#advantages" class="nav-link">
-                            <i class="fas fa-star"></i>
-                            <span>Vantagens</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#contact" class="nav-link">
-                            <i class="fas fa-phone"></i>
-                            <span>Contato</span>
-                        </a>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </nav>
         </div>
     </header>
-
-    <!-- Overlay para fechar menu mobile -->
-    <div class="mobile-overlay" id="mobileOverlay"></div>
 
     <!-- Main Content -->
     <main>

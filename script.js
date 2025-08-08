@@ -1,161 +1,192 @@
-// Aguarda o carregamento completo do DOM
+// ===== MENU MOBILE UNIVERSALMENTE RESPONSIVO =====
+// Sistema robusto e compatível com todos os dispositivos
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Elementos do DOM
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    console.log('🚀 TechFix - Sistema de Menu Mobile Iniciado');
+    
+    // ===== ELEMENTOS DO DOM =====
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const navMenu = document.getElementById('navMenu');
-    const mobileOverlay = document.getElementById('mobileOverlay');
+    const navOverlay = document.getElementById('navOverlay');
+    const navClose = document.getElementById('navClose');
     const navLinks = document.querySelectorAll('.nav-link');
-    const toast = document.getElementById('toast');
+    const body = document.body;
     
-    // Estado do menu mobile
-    let isMobileMenuOpen = false;
+    // ===== ESTADO DO MENU =====
+    let isMenuOpen = false;
+    let isAnimating = false;
     
-    // Função para mostrar toast notification
-    function showToast(message, type = 'success', duration = 3000) {
-        if (!toast) return;
-        
-        const toastIcon = toast.querySelector('.toast-icon');
-        const toastMessage = toast.querySelector('.toast-message');
-        
-        // Remove classes anteriores
-        toast.classList.remove('success', 'error', 'show');
-        
-        // Define o ícone baseado no tipo
-        if (type === 'success') {
-            toastIcon.className = 'toast-icon fas fa-check-circle';
-            toast.classList.add('success');
-        } else if (type === 'error') {
-            toastIcon.className = 'toast-icon fas fa-exclamation-circle';
-            toast.classList.add('error');
-        } else {
-            toastIcon.className = 'toast-icon fas fa-info-circle';
-        }
-        
-        // Define a mensagem
-        toastMessage.textContent = message;
-        
-        // Mostra o toast
-        toast.classList.add('show');
-        
-        // Remove o toast após o tempo especificado
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, duration);
+    // ===== FUNÇÕES DE UTILIDADE =====
+    
+    // Detecta se é dispositivo móvel
+    function isMobileDevice() {
+        return window.innerWidth <= 768 || 
+               /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
     
-    // Função para detectar se está em mobile
-    function isMobile() {
-        return window.innerWidth <= 768 || window.matchMedia('(max-width: 768px)').matches;
+    // Detecta se é touch device
+    function isTouchDevice() {
+        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     }
     
-    // Função para abrir o menu mobile
-    function openMobileMenu() {
-        console.log('Tentando abrir menu mobile...');
-        console.log('isMobile():', isMobile());
-        console.log('window.innerWidth:', window.innerWidth);
-        
-        isMobileMenuOpen = true;
-        
-        // Adiciona classes ativas
-        if (mobileMenuBtn) {
-            mobileMenuBtn.classList.add('active');
-            console.log('Botão marcado como ativo');
+    // Previne scroll do body
+    function preventBodyScroll() {
+        const scrollY = window.scrollY;
+        body.style.position = 'fixed';
+        body.style.top = `-${scrollY}px`;
+        body.style.width = '100%';
+        body.classList.add('nav-open');
+    }
+    
+    // Restaura scroll do body
+    function restoreBodyScroll() {
+        const scrollY = body.style.top;
+        body.style.position = '';
+        body.style.top = '';
+        body.style.width = '';
+        body.classList.remove('nav-open');
+        if (scrollY) {
+            window.scrollTo(0, parseInt(scrollY || '0') * -1);
         }
-        
-        if (navMenu) {
-            navMenu.classList.add('active');
-            console.log('Menu marcado como ativo');
+    }
+    
+    // Feedback tátil (vibração)
+    function hapticFeedback(duration = 50) {
+        if ('vibrate' in navigator && isTouchDevice()) {
+            navigator.vibrate(duration);
         }
+    }
+    
+    // Log de debug
+    function debugLog(message, data = null) {
+        console.log(`📱 Menu Mobile: ${message}`, data || '');
+    }
+    
+    // ===== FUNÇÕES DO MENU =====
+    
+    // Abre o menu mobile
+    function openMenu() {
+        if (isAnimating || isMenuOpen) return;
         
-        if (mobileOverlay) {
-            mobileOverlay.classList.add('active');
-            mobileOverlay.style.display = 'block';
-            console.log('Overlay ativado');
-        }
+        debugLog('Abrindo menu mobile...');
+        isAnimating = true;
+        isMenuOpen = true;
+        
+        // Atualiza atributos de acessibilidade
+        mobileMenuToggle.setAttribute('aria-expanded', 'true');
+        mobileMenuToggle.classList.add('active');
+        
+        // Ativa o menu
+        navMenu.classList.add('active');
         
         // Previne scroll do body
-        document.body.style.overflow = 'hidden';
+        preventBodyScroll();
         
-        // Adiciona animação aos links do menu
-        navLinks.forEach((link, index) => {
-            link.style.animationDelay = `${index * 0.1}s`;
-            link.style.animation = 'fadeInLeft 0.3s ease-out forwards';
-        });
+        // Feedback tátil
+        hapticFeedback();
         
-        // Feedback tátil em dispositivos móveis
-        if ('vibrate' in navigator) {
-            navigator.vibrate(50);
-        }
-        
-        console.log('Menu mobile aberto!');
+        // Foca no primeiro link após a animação
+        setTimeout(() => {
+            const firstLink = navMenu.querySelector('.nav-link');
+            if (firstLink) {
+                firstLink.focus();
+            }
+            isAnimating = false;
+            debugLog('Menu aberto com sucesso');
+        }, 300);
     }
     
-    // Função para fechar o menu mobile
-    function closeMobileMenu() {
-        isMobileMenuOpen = false;
+    // Fecha o menu mobile
+    function closeMenu() {
+        if (isAnimating || !isMenuOpen) return;
         
-        // Remove classes ativas
-        mobileMenuBtn.classList.remove('active');
+        debugLog('Fechando menu mobile...');
+        isAnimating = true;
+        isMenuOpen = false;
+        
+        // Atualiza atributos de acessibilidade
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        mobileMenuToggle.classList.remove('active');
+        
+        // Desativa o menu
         navMenu.classList.remove('active');
-        mobileOverlay.classList.remove('active');
-        
-        // Esconde o overlay após a transição
-        setTimeout(() => {
-            mobileOverlay.style.display = 'none';
-        }, 300);
         
         // Restaura scroll do body
-        document.body.style.overflow = '';
+        restoreBodyScroll();
         
-        // Remove animações dos links
-        navLinks.forEach(link => {
-            link.style.animation = '';
-            link.style.animationDelay = '';
-        });
+        // Feedback tátil
+        hapticFeedback(30);
+        
+        // Retorna foco para o botão toggle
+        setTimeout(() => {
+            mobileMenuToggle.focus();
+            isAnimating = false;
+            debugLog('Menu fechado com sucesso');
+        }, 300);
     }
     
-    // Função para alternar o menu mobile
-    function toggleMobileMenu() {
-        if (isMobileMenuOpen) {
-            closeMobileMenu();
+    // Alterna o estado do menu
+    function toggleMenu() {
+        if (isMenuOpen) {
+            closeMenu();
         } else {
-            openMobileMenu();
+            openMenu();
         }
     }
     
-    // Event listener para o botão de menu mobile
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', function(e) {
+    // ===== EVENT LISTENERS =====
+    
+    // Botão de toggle do menu
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            toggleMobileMenu();
+            debugLog('Clique no botão toggle');
+            toggleMenu();
         });
         
-        // Adiciona efeito de hover no botão
-        mobileMenuBtn.addEventListener('mouseenter', function() {
-            if (!isMobile()) {
-                this.style.transform = 'scale(1.05)';
+        // Suporte a teclado
+        mobileMenuToggle.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleMenu();
             }
         });
+    }
+    
+    // Botão de fechar
+    if (navClose) {
+        navClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            debugLog('Clique no botão fechar');
+            closeMenu();
+        });
         
-        mobileMenuBtn.addEventListener('mouseleave', function() {
-            this.style.transform = '';
+        // Suporte a teclado
+        navClose.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                closeMenu();
+            }
         });
     }
     
-    // Event listener para o overlay
-    if (mobileOverlay) {
-        mobileOverlay.addEventListener('click', function() {
-            closeMobileMenu();
+    // Overlay
+    if (navOverlay) {
+        navOverlay.addEventListener('click', function(e) {
+            e.preventDefault();
+            debugLog('Clique no overlay');
+            closeMenu();
         });
     }
     
-    // Event listeners para os links de navegação
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            const href = link.getAttribute('href');
+    // Links de navegação
+    navLinks.forEach((link, index) => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
             
-            // Se for um link interno (âncora)
+            // Se for link interno (âncora)
             if (href && href.startsWith('#')) {
                 e.preventDefault();
                 
@@ -163,64 +194,162 @@ document.addEventListener('DOMContentLoaded', function() {
                 const targetElement = document.getElementById(targetId);
                 
                 if (targetElement) {
-                    // Fecha o menu mobile se estiver aberto
-                    if (isMobileMenuOpen) {
-                        closeMobileMenu();
+                    debugLog(`Navegando para seção: ${targetId}`);
+                    
+                    // Fecha o menu se estiver aberto
+                    if (isMenuOpen) {
+                        closeMenu();
                         
                         // Aguarda o menu fechar antes de fazer scroll
                         setTimeout(() => {
-                            targetElement.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'start'
-                            });
-                        }, 300);
+                            scrollToSection(targetElement);
+                        }, 350);
                     } else {
-                        // Scroll imediato se o menu não estiver aberto
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
+                        scrollToSection(targetElement);
                     }
                     
-                    // Remove classe ativa de todos os links
-                    navLinks.forEach(navLink => navLink.classList.remove('active'));
-                    
-                    // Adiciona classe ativa ao link clicado
-                    link.classList.add('active');
-                    
-                    // Remove classe ativa após um tempo
-                    setTimeout(() => {
-                        link.classList.remove('active');
-                    }, 1000);
+                    // Atualiza link ativo
+                    updateActiveLink(this);
                 }
             } else {
                 // Para links externos, apenas fecha o menu
-                if (isMobileMenuOpen) {
-                    closeMobileMenu();
+                if (isMenuOpen) {
+                    closeMenu();
                 }
             }
         });
         
-        // Efeitos de hover aprimorados (apenas para desktop)
-        link.addEventListener('mouseenter', function() {
-            if (!isMobile()) {
-                this.style.transform = 'translateY(-2px) scale(1.05)';
+        // Suporte a teclado para navegação
+        link.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                this.click();
             }
-        });
-        
-        link.addEventListener('mouseleave', function() {
-            if (!isMobile()) {
-                this.style.transform = '';
+            
+            // Navegação com setas
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                const nextLink = navLinks[index + 1];
+                if (nextLink) {
+                    nextLink.focus();
+                }
+            }
+            
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prevLink = navLinks[index - 1];
+                if (prevLink) {
+                    prevLink.focus();
+                }
             }
         });
     });
     
-    // Função para adicionar efeitos de scroll
+    // ===== NAVEGAÇÃO E SCROLL =====
+    
+    // Scroll suave para seção
+    function scrollToSection(element) {
+        const headerHeight = document.querySelector('.header').offsetHeight;
+        const elementPosition = element.offsetTop - headerHeight - 20;
+        
+        window.scrollTo({
+            top: elementPosition,
+            behavior: 'smooth'
+        });
+    }
+    
+    // Atualiza link ativo
+    function updateActiveLink(activeLink) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        activeLink.classList.add('active');
+        
+        setTimeout(() => {
+            activeLink.classList.remove('active');
+        }, 1000);
+    }
+    
+    // ===== EVENTOS GLOBAIS =====
+    
+    // Tecla ESC para fechar menu
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isMenuOpen) {
+            debugLog('ESC pressionado - fechando menu');
+            closeMenu();
+        }
+    });
+    
+    // Clique fora do menu para fechar
+    document.addEventListener('click', function(e) {
+        if (isMenuOpen && 
+            !navMenu.contains(e.target) && 
+            !mobileMenuToggle.contains(e.target)) {
+            debugLog('Clique fora do menu - fechando');
+            closeMenu();
+        }
+    });
+    
+    // Redimensionamento da janela
+    window.addEventListener('resize', function() {
+        // Fecha menu se mudou para desktop
+        if (window.innerWidth > 768 && isMenuOpen) {
+            debugLog('Mudança para desktop - fechando menu');
+            closeMenu();
+        }
+    });
+    
+    // ===== GESTOS TOUCH =====
+    
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    
+    // Início do toque
+    document.addEventListener('touchstart', function(e) {
+        if (!isMobileDevice()) return;
+        
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+    }, { passive: true });
+    
+    // Fim do toque
+    document.addEventListener('touchend', function(e) {
+        if (!isMobileDevice()) return;
+        
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        const touchEndTime = Date.now();
+        
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+        const deltaTime = touchEndTime - touchStartTime;
+        
+        // Swipe para a direita para abrir menu (apenas na borda esquerda)
+        if (deltaX > 50 && 
+            Math.abs(deltaY) < 100 && 
+            deltaTime < 300 && 
+            touchStartX < 50 && 
+            !isMenuOpen) {
+            debugLog('Swipe para direita detectado - abrindo menu');
+            openMenu();
+        }
+        
+        // Swipe para a esquerda para fechar menu
+        if (deltaX < -50 && 
+            Math.abs(deltaY) < 100 && 
+            deltaTime < 300 && 
+            isMenuOpen) {
+            debugLog('Swipe para esquerda detectado - fechando menu');
+            closeMenu();
+        }
+    }, { passive: true });
+    
+    // ===== EFEITOS VISUAIS =====
+    
+    // Efeito de scroll no header
     function handleScroll() {
         const header = document.querySelector('.header');
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         
-        // Efeito no header baseado no scroll
         if (header) {
             if (scrollTop > 50) {
                 header.style.background = 'rgba(255, 255, 255, 0.98)';
@@ -231,24 +360,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Animação de elementos ao entrar na viewport
-        const animatedElements = document.querySelectorAll('.service-card, .advantage-card, .contact-card');
-        
-        animatedElements.forEach(element => {
-            const elementTop = element.getBoundingClientRect().top;
-            const elementVisible = 150;
-            
-            if (elementTop < window.innerHeight - elementVisible) {
-                element.style.opacity = '1';
-                element.style.transform = 'translateY(0)';
-            }
-        });
-        
-        // Atualizar link ativo baseado na seção visível
+        // Atualiza link ativo baseado na seção visível
         updateActiveNavLink();
     }
     
-    // Função para atualizar o link ativo baseado na seção visível
+    // Atualiza link ativo baseado na seção visível
     function updateActiveNavLink() {
         const sections = document.querySelectorAll('section[id]');
         const scrollPos = window.scrollY + 100;
@@ -259,11 +375,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const sectionId = section.getAttribute('id');
             
             if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
-                // Remove classe ativa de todos os links
                 navLinks.forEach(link => link.classList.remove('active'));
                 
-                // Adiciona classe ativa ao link correspondente
-                const activeLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
+                const activeLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
                 if (activeLink) {
                     activeLink.classList.add('active');
                 }
@@ -273,6 +387,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Event listener para scroll
     window.addEventListener('scroll', handleScroll);
+    
+    // ===== ANIMAÇÕES DE ENTRADA =====
     
     // Inicializa elementos animados
     function initAnimatedElements() {
@@ -285,26 +401,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Função para fechar menu ao redimensionar a janela
-    function handleResize() {
-        if (window.innerWidth > 768 && isMobileMenuOpen) {
-            closeMobileMenu();
-        }
+    // Anima elementos ao entrar na viewport
+    function animateOnScroll() {
+        const animatedElements = document.querySelectorAll('.service-card, .advantage-card, .contact-card');
         
-        // Atualiza estado do menu baseado no tamanho da tela
-        if (window.innerWidth > 768) {
-            // Desktop: garante que o menu esteja visível
-            navMenu.style.transform = '';
-            navMenu.classList.remove('active');
-            mobileOverlay.style.display = 'none';
-            document.body.style.overflow = '';
-        }
+        animatedElements.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+            const elementVisible = 150;
+            
+            if (elementTop < window.innerHeight - elementVisible) {
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+            }
+        });
     }
     
-    // Event listener para redimensionamento
-    window.addEventListener('resize', handleResize);
+    // ===== EFEITOS PARALLAX =====
     
-    // Função para adicionar efeitos de parallax suave
     function handleParallax() {
         const heroParticles = document.querySelector('.hero-particles');
         const scrollTop = window.pageYOffset;
@@ -314,12 +427,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Event listener para parallax (com throttle para performance)
+    // Throttle para performance
     let ticking = false;
     function requestTick() {
         if (!ticking) {
             requestAnimationFrame(() => {
                 handleParallax();
+                animateOnScroll();
                 ticking = false;
             });
             ticking = true;
@@ -328,7 +442,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     window.addEventListener('scroll', requestTick);
     
-    // Função para smooth scroll nos botões da hero section
+    // ===== SMOOTH SCROLL PARA BOTÕES =====
+    
     function initSmoothScroll() {
         const heroButtons = document.querySelectorAll('.hero-buttons .btn');
         
@@ -343,38 +458,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     const targetElement = document.getElementById(targetId);
                     
                     if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
+                        scrollToSection(targetElement);
                     }
                 }
             });
         });
     }
     
-    // Função para adicionar efeitos de hover nos cards (apenas desktop)
+    // ===== EFEITOS DE HOVER (APENAS DESKTOP) =====
+    
     function initCardEffects() {
+        if (isTouchDevice()) return;
+        
         const cards = document.querySelectorAll('.service-card, .advantage-card, .contact-card');
         
         cards.forEach(card => {
             card.addEventListener('mouseenter', function() {
-                if (!isMobile()) {
-                    this.style.transform = 'translateY(-10px) scale(1.02)';
-                    this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
-                }
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+                this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
             });
             
             card.addEventListener('mouseleave', function() {
-                if (!isMobile()) {
-                    this.style.transform = '';
-                    this.style.boxShadow = '';
-                }
+                this.style.transform = '';
+                this.style.boxShadow = '';
             });
         });
     }
     
-    // Função para adicionar efeito de ripple nos botões
+    // ===== EFEITO RIPPLE NOS BOTÕES =====
+    
     function initRippleEffect() {
         const buttons = document.querySelectorAll('.btn');
         
@@ -400,230 +512,63 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Função para adicionar funcionalidade de clique fora do menu para fechar
-    function initClickOutside() {
-        document.addEventListener('click', function(e) {
-            if (isMobileMenuOpen && 
-                !navMenu.contains(e.target) && 
-                !mobileMenuBtn.contains(e.target) &&
-                !e.target.closest('.nav-brand')) {
-                closeMobileMenu();
-            }
-        });
-    }
+    // ===== INICIALIZAÇÃO =====
     
-    // Função para adicionar suporte a teclas de atalho
-    function initKeyboardShortcuts() {
-        document.addEventListener('keydown', function(e) {
-            // ESC para fechar menu mobile
-            if (e.key === 'Escape' && isMobileMenuOpen) {
-                closeMobileMenu();
-            }
-            
-            // Teclas numéricas para navegação rápida
-            if (e.altKey) {
-                switch(e.key) {
-                    case '1':
-                        e.preventDefault();
-                        document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
-                        break;
-                    case '2':
-                        e.preventDefault();
-                        document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
-                        break;
-                    case '3':
-                        e.preventDefault();
-                        document.getElementById('advantages')?.scrollIntoView({ behavior: 'smooth' });
-                        break;
-                    case '4':
-                        e.preventDefault();
-                        document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-                        break;
-                }
-            }
-        });
-    }
-    
-    // Função para adicionar suporte a gestos touch
-    function initTouchGestures() {
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let touchStartTime = 0;
+    function init() {
+        debugLog('Inicializando sistema de menu mobile...');
+        debugLog('Dispositivo móvel:', isMobileDevice());
+        debugLog('Touch device:', isTouchDevice());
+        debugLog('User Agent:', navigator.userAgent);
         
-        document.addEventListener('touchstart', function(e) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            touchStartTime = Date.now();
-        }, { passive: true });
+        // Inicializa componentes
+        initAnimatedElements();
+        initSmoothScroll();
+        initCardEffects();
+        initRippleEffect();
         
-        document.addEventListener('touchend', function(e) {
-            if (!touchStartX || !touchStartY) return;
-            
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            const touchEndTime = Date.now();
-            
-            const diffX = touchStartX - touchEndX;
-            const diffY = touchStartY - touchEndY;
-            const timeDiff = touchEndTime - touchStartTime;
-            
-            // Swipe deve ser rápido (menos de 300ms) e com distância mínima
-            if (timeDiff < 300 && Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-                if (diffX > 0 && isMobileMenuOpen) {
-                    // Swipe left - fechar menu
-                    closeMobileMenu();
-                } else if (diffX < 0 && !isMobileMenuOpen && touchStartX < 50) {
-                    // Swipe right da borda esquerda - abrir menu
-                    openMobileMenu();
-                }
-            }
-            
-            touchStartX = 0;
-            touchStartY = 0;
-            touchStartTime = 0;
-        }, { passive: true });
-    }
-    
-    // Função para otimizar performance em dispositivos móveis
-    function initMobileOptimizations() {
-        if (isMobile()) {
-            // Reduz a frequência de eventos de scroll em dispositivos móveis
-            let scrollTimeout;
-            const originalScrollHandler = handleScroll;
-            
-            function throttledScrollHandler() {
-                if (scrollTimeout) return;
-                
-                scrollTimeout = setTimeout(() => {
-                    originalScrollHandler();
-                    scrollTimeout = null;
-                }, 16); // ~60fps
-            }
-            
-            window.removeEventListener('scroll', handleScroll);
-            window.addEventListener('scroll', throttledScrollHandler, { passive: true });
-        }
-    }
-    
-    // Função para detectar orientação do dispositivo
-    function handleOrientationChange() {
-        // Fecha o menu quando a orientação muda
-        if (isMobileMenuOpen) {
-            closeMobileMenu();
-        }
+        // Executa scroll inicial
+        handleScroll();
         
-        // Pequeno delay para aguardar a mudança de orientação
-        setTimeout(() => {
-            handleResize();
-        }, 100);
+        debugLog('Sistema inicializado com sucesso! ✅');
     }
     
-    // Event listener para mudança de orientação
-    window.addEventListener('orientationchange', handleOrientationChange);
+    // ===== TRATAMENTO DE ERROS =====
     
-    // Função para adicionar indicador de carregamento
-    function initLoadingIndicator() {
-        // Remove indicador de carregamento quando a página estiver pronta
-        window.addEventListener('load', function() {
-            document.body.classList.add('loaded');
-        });
-    }
-    
-    // Função para melhorar acessibilidade
-    function initAccessibility() {
-        // Adiciona atributos ARIA dinâmicos
-        if (mobileMenuBtn) {
-            mobileMenuBtn.setAttribute('aria-expanded', 'false');
-            mobileMenuBtn.setAttribute('aria-controls', 'navMenu');
-        }
-        
-        if (navMenu) {
-            navMenu.setAttribute('aria-hidden', 'true');
-        }
-        
-        // Atualiza atributos quando o menu abre/fecha
-        const originalOpenMenu = openMobileMenu;
-        const originalCloseMenu = closeMobileMenu;
-        
-        openMobileMenu = function() {
-            originalOpenMenu();
-            if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'true');
-            if (navMenu) navMenu.setAttribute('aria-hidden', 'false');
-        };
-        
-        closeMobileMenu = function() {
-            originalCloseMenu();
-            if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'false');
-            if (navMenu) navMenu.setAttribute('aria-hidden', 'true');
-        };
-    }
-    
-    // Inicializa todas as funcionalidades
-    initAnimatedElements();
-    initSmoothScroll();
-    initCardEffects();
-    initRippleEffect();
-    initClickOutside();
-    initKeyboardShortcuts();
-    initTouchGestures();
-    initLoadingIndicator();
-    initMobileOptimizations();
-    initAccessibility();
-    
-    // Chama handleScroll uma vez para configurar estado inicial
-    handleScroll();
-    
-    // Adiciona classe para indicar que o JavaScript foi carregado
-    document.body.classList.add('js-loaded');
-    
-    // Log de inicialização (pode ser removido em produção)
-    console.log('TechFix website initialized successfully!');
-    
-    // Função para detectar se o usuário prefere movimento reduzido
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        // Desabilita animações para usuários que preferem movimento reduzido
-        document.documentElement.style.setProperty('--transition-fast', '0.01ms');
-        document.documentElement.style.setProperty('--transition-normal', '0.01ms');
-        document.documentElement.style.setProperty('--transition-slow', '0.01ms');
-    }
-    
-    // Adiciona suporte para PWA (se necessário no futuro)
-    if ('serviceWorker' in navigator) {
-        // Código para service worker pode ser adicionado aqui
-    }
-});
-
-// Função para detectar se o usuário está em um dispositivo móvel
-function isMobileDevice() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-// Função para detectar se o usuário prefere movimento reduzido
-function prefersReducedMotion() {
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
-// Função para otimizar performance
-function optimizePerformance() {
-    // Preload de recursos críticos
-    const criticalResources = [
-        'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap',
-        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
-    ];
-    
-    criticalResources.forEach(resource => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'style';
-        link.href = resource;
-        document.head.appendChild(link);
+    window.addEventListener('error', function(e) {
+        console.error('❌ Erro no sistema de menu:', e.error);
     });
-}
-
-// Executa otimizações quando o DOM estiver pronto
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', optimizePerformance);
-} else {
-    optimizePerformance();
-}
+    
+    // ===== PERFORMANCE MONITORING =====
+    
+    if ('performance' in window) {
+        window.addEventListener('load', function() {
+            const loadTime = performance.now();
+            debugLog(`Tempo de carregamento: ${loadTime.toFixed(2)}ms`);
+        });
+    }
+    
+    // ===== INICIALIZAÇÃO FINAL =====
+    
+    // Aguarda um frame para garantir que tudo foi renderizado
+    requestAnimationFrame(() => {
+        init();
+    });
+    
+    // ===== EXPOSIÇÃO GLOBAL PARA DEBUG =====
+    
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        window.TechFixMenu = {
+            openMenu,
+            closeMenu,
+            toggleMenu,
+            isMenuOpen: () => isMenuOpen,
+            isAnimating: () => isAnimating,
+            debugLog
+        };
+        
+        debugLog('Funções de debug expostas em window.TechFixMenu');
+    }
+    
+    console.log('🎉 TechFix - Sistema de Menu Mobile Carregado com Sucesso!');
+});
 
