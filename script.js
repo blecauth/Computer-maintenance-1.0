@@ -1,574 +1,373 @@
-// ===== MENU MOBILE UNIVERSALMENTE RESPONSIVO =====
-// Sistema robusto e compatível com todos os dispositivos
+// ===== CONFIGURAÇÕES GLOBAIS =====
+console.log('📱 TechFix - Menu Mobile Fixo Inferior: Inicializando...');
 
+// ===== VARIÁVEIS GLOBAIS =====
+let currentSection = 'home';
+let isScrolling = false;
+let scrollTimeout;
+
+// ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 TechFix - Sistema de Menu Mobile Iniciado');
+    console.log('📱 Menu Mobile Fixo: DOM carregado');
     
-    // ===== ELEMENTOS DO DOM =====
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const navMenu = document.getElementById('navMenu');
-    const navOverlay = document.getElementById('navOverlay');
-    const navClose = document.getElementById('navClose');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const body = document.body;
+    // Inicializar funcionalidades
+    initMobileBottomNav();
+    initSmoothScrolling();
+    initSectionObserver();
+    initScrollEffects();
     
-    // ===== ESTADO DO MENU =====
-    let isMenuOpen = false;
-    let isAnimating = false;
+    console.log('📱 Menu Mobile Fixo: Sistema inicializado com sucesso! ✅');
+});
+
+// ===== MENU MOBILE FIXO INFERIOR =====
+function initMobileBottomNav() {
+    console.log('📱 Menu Mobile Fixo: Inicializando navegação inferior...');
     
-    // ===== FUNÇÕES DE UTILIDADE =====
+    const mobileNav = document.getElementById('mobileBottomNav');
+    const navLinks = document.querySelectorAll('.mobile-nav-link');
     
-    // Detecta se é dispositivo móvel
-    function isMobileDevice() {
-        return window.innerWidth <= 768 || 
-               /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (!mobileNav) {
+        console.warn('📱 Menu Mobile Fixo: Elemento mobileBottomNav não encontrado');
+        return;
     }
     
-    // Detecta se é touch device
-    function isTouchDevice() {
-        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    }
-    
-    // Previne scroll do body
-    function preventBodyScroll() {
-        const scrollY = window.scrollY;
-        body.style.position = 'fixed';
-        body.style.top = `-${scrollY}px`;
-        body.style.width = '100%';
-        body.classList.add('nav-open');
-    }
-    
-    // Restaura scroll do body
-    function restoreBodyScroll() {
-        const scrollY = body.style.top;
-        body.style.position = '';
-        body.style.top = '';
-        body.style.width = '';
-        body.classList.remove('nav-open');
-        if (scrollY) {
-            window.scrollTo(0, parseInt(scrollY || '0') * -1);
-        }
-    }
-    
-    // Feedback tátil (vibração)
-    function hapticFeedback(duration = 50) {
-        if ('vibrate' in navigator && isTouchDevice()) {
-            navigator.vibrate(duration);
-        }
-    }
-    
-    // Log de debug
-    function debugLog(message, data = null) {
-        console.log(`📱 Menu Mobile: ${message}`, data || '');
-    }
-    
-    // ===== FUNÇÕES DO MENU =====
-    
-    // Abre o menu mobile
-    function openMenu() {
-        if (isAnimating || isMenuOpen) return;
-        
-        debugLog('Abrindo menu mobile...');
-        isAnimating = true;
-        isMenuOpen = true;
-        
-        // Atualiza atributos de acessibilidade
-        mobileMenuToggle.setAttribute('aria-expanded', 'true');
-        mobileMenuToggle.classList.add('active');
-        
-        // Ativa o menu
-        navMenu.classList.add('active');
-        
-        // Previne scroll do body
-        preventBodyScroll();
-        
-        // Feedback tátil
-        hapticFeedback();
-        
-        // Foca no primeiro link após a animação
-        setTimeout(() => {
-            const firstLink = navMenu.querySelector('.nav-link');
-            if (firstLink) {
-                firstLink.focus();
-            }
-            isAnimating = false;
-            debugLog('Menu aberto com sucesso');
-        }, 300);
-    }
-    
-    // Fecha o menu mobile
-    function closeMenu() {
-        if (isAnimating || !isMenuOpen) return;
-        
-        debugLog('Fechando menu mobile...');
-        isAnimating = true;
-        isMenuOpen = false;
-        
-        // Atualiza atributos de acessibilidade
-        mobileMenuToggle.setAttribute('aria-expanded', 'false');
-        mobileMenuToggle.classList.remove('active');
-        
-        // Desativa o menu
-        navMenu.classList.remove('active');
-        
-        // Restaura scroll do body
-        restoreBodyScroll();
-        
-        // Feedback tátil
-        hapticFeedback(30);
-        
-        // Retorna foco para o botão toggle
-        setTimeout(() => {
-            mobileMenuToggle.focus();
-            isAnimating = false;
-            debugLog('Menu fechado com sucesso');
-        }, 300);
-    }
-    
-    // Alterna o estado do menu
-    function toggleMenu() {
-        if (isMenuOpen) {
-            closeMenu();
-        } else {
-            openMenu();
-        }
-    }
-    
-    // ===== EVENT LISTENERS =====
-    
-    // Botão de toggle do menu
-    if (mobileMenuToggle) {
-        mobileMenuToggle.addEventListener('click', function(e) {
+    // Adicionar event listeners para os links do menu mobile
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
             e.preventDefault();
-            e.stopPropagation();
-            debugLog('Clique no botão toggle');
-            toggleMenu();
-        });
-        
-        // Suporte a teclado
-        mobileMenuToggle.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                toggleMenu();
+            
+            const targetSection = this.getAttribute('data-section');
+            console.log(`📱 Menu Mobile Fixo: Navegando para seção: ${targetSection}`);
+            
+            // Remover classe active de todos os links
+            navLinks.forEach(l => l.classList.remove('active'));
+            
+            // Adicionar classe active ao link clicado
+            this.classList.add('active');
+            
+            // Navegar para a seção
+            navigateToSection(targetSection);
+            
+            // Feedback tátil (vibração) se disponível
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
             }
         });
-    }
-    
-    // Botão de fechar
-    if (navClose) {
-        navClose.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            debugLog('Clique no botão fechar');
-            closeMenu();
-        });
         
-        // Suporte a teclado
-        navClose.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                closeMenu();
-            }
+        // Adicionar efeito de ripple ao tocar
+        link.addEventListener('touchstart', function(e) {
+            createRippleEffect(this, e);
         });
-    }
+    });
     
-    // Overlay
-    if (navOverlay) {
-        navOverlay.addEventListener('click', function(e) {
-            e.preventDefault();
-            debugLog('Clique no overlay');
-            closeMenu();
-        });
-    }
+    console.log('📱 Menu Mobile Fixo: Navegação inferior configurada ✅');
+}
+
+// ===== NAVEGAÇÃO SUAVE ENTRE SEÇÕES =====
+function initSmoothScrolling() {
+    console.log('📱 Menu Mobile Fixo: Configurando scroll suave...');
     
-    // Links de navegação
-    navLinks.forEach((link, index) => {
+    // Configurar scroll suave para todos os links de navegação
+    const allNavLinks = document.querySelectorAll('a[href^="#"], .nav-link-desktop, .mobile-nav-link');
+    
+    allNavLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
+            const targetSection = this.getAttribute('data-section');
             
-            // Se for link interno (âncora)
             if (href && href.startsWith('#')) {
                 e.preventDefault();
-                
-                const targetId = href.substring(1);
-                const targetElement = document.getElementById(targetId);
-                
-                if (targetElement) {
-                    debugLog(`Navegando para seção: ${targetId}`);
-                    
-                    // Fecha o menu se estiver aberto
-                    if (isMenuOpen) {
-                        closeMenu();
-                        
-                        // Aguarda o menu fechar antes de fazer scroll
-                        setTimeout(() => {
-                            scrollToSection(targetElement);
-                        }, 350);
-                    } else {
-                        scrollToSection(targetElement);
-                    }
-                    
-                    // Atualiza link ativo
-                    updateActiveLink(this);
-                }
-            } else {
-                // Para links externos, apenas fecha o menu
-                if (isMenuOpen) {
-                    closeMenu();
-                }
-            }
-        });
-        
-        // Suporte a teclado para navegação
-        link.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                this.click();
-            }
-            
-            // Navegação com setas
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                const nextLink = navLinks[index + 1];
-                if (nextLink) {
-                    nextLink.focus();
-                }
-            }
-            
-            if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                const prevLink = navLinks[index - 1];
-                if (prevLink) {
-                    prevLink.focus();
-                }
+                const sectionId = href.substring(1) || targetSection;
+                navigateToSection(sectionId);
             }
         });
     });
     
-    // ===== NAVEGAÇÃO E SCROLL =====
+    console.log('📱 Menu Mobile Fixo: Scroll suave configurado ✅');
+}
+
+// ===== FUNÇÃO DE NAVEGAÇÃO =====
+function navigateToSection(sectionId) {
+    console.log(`📱 Menu Mobile Fixo: Navegando para: ${sectionId}`);
     
-    // Scroll suave para seção
-    function scrollToSection(element) {
-        const headerHeight = document.querySelector('.header').offsetHeight;
-        const elementPosition = element.offsetTop - headerHeight - 20;
-        
-        window.scrollTo({
-            top: elementPosition,
-            behavior: 'smooth'
-        });
+    const targetElement = document.getElementById(sectionId);
+    
+    if (!targetElement) {
+        console.warn(`📱 Menu Mobile Fixo: Seção '${sectionId}' não encontrada`);
+        return;
     }
     
-    // Atualiza link ativo
-    function updateActiveLink(activeLink) {
-        navLinks.forEach(link => link.classList.remove('active'));
-        activeLink.classList.add('active');
-        
-        setTimeout(() => {
-            activeLink.classList.remove('active');
-        }, 1000);
+    // Calcular offset para compensar header fixo e menu mobile
+    const headerHeight = document.querySelector('.header')?.offsetHeight || 70;
+    const mobileNavHeight = window.innerWidth <= 768 ? 80 : 0;
+    const offset = headerHeight + 20; // 20px de margem adicional
+    
+    const targetPosition = targetElement.offsetTop - offset;
+    
+    // Scroll suave
+    window.scrollTo({
+        top: Math.max(0, targetPosition),
+        behavior: 'smooth'
+    });
+    
+    // Atualizar seção atual
+    currentSection = sectionId;
+    
+    // Atualizar estado ativo do menu
+    updateActiveNavItem(sectionId);
+    
+    console.log(`📱 Menu Mobile Fixo: Navegação para '${sectionId}' concluída`);
+}
+
+// ===== ATUALIZAR ITEM ATIVO DO MENU =====
+function updateActiveNavItem(sectionId) {
+    // Atualizar menu desktop
+    const desktopLinks = document.querySelectorAll('.nav-link-desktop');
+    desktopLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-section') === sectionId) {
+            link.classList.add('active');
+        }
+    });
+    
+    // Atualizar menu mobile
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+    mobileLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-section') === sectionId) {
+            link.classList.add('active');
+        }
+    });
+}
+
+// ===== OBSERVADOR DE SEÇÕES =====
+function initSectionObserver() {
+    console.log('📱 Menu Mobile Fixo: Configurando observador de seções...');
+    
+    const sections = document.querySelectorAll('section[id]');
+    
+    if (sections.length === 0) {
+        console.warn('📱 Menu Mobile Fixo: Nenhuma seção encontrada');
+        return;
     }
     
-    // ===== EVENTOS GLOBAIS =====
+    const observerOptions = {
+        root: null,
+        rootMargin: '-20% 0px -60% 0px', // Detectar quando a seção está 20% visível
+        threshold: 0.1
+    };
     
-    // Tecla ESC para fechar menu
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && isMenuOpen) {
-            debugLog('ESC pressionado - fechando menu');
-            closeMenu();
-        }
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !isScrolling) {
+                const sectionId = entry.target.id;
+                
+                if (sectionId !== currentSection) {
+                    console.log(`📱 Menu Mobile Fixo: Seção visível: ${sectionId}`);
+                    currentSection = sectionId;
+                    updateActiveNavItem(sectionId);
+                }
+            }
+        });
+    }, observerOptions);
+    
+    // Observar todas as seções
+    sections.forEach(section => {
+        sectionObserver.observe(section);
     });
     
-    // Clique fora do menu para fechar
-    document.addEventListener('click', function(e) {
-        if (isMenuOpen && 
-            !navMenu.contains(e.target) && 
-            !mobileMenuToggle.contains(e.target)) {
-            debugLog('Clique fora do menu - fechando');
-            closeMenu();
-        }
-    });
+    console.log('📱 Menu Mobile Fixo: Observador de seções configurado ✅');
+}
+
+// ===== EFEITOS DE SCROLL =====
+function initScrollEffects() {
+    console.log('📱 Menu Mobile Fixo: Configurando efeitos de scroll...');
     
-    // Redimensionamento da janela
-    window.addEventListener('resize', function() {
-        // Fecha menu se mudou para desktop
-        if (window.innerWidth > 768 && isMenuOpen) {
-            debugLog('Mudança para desktop - fechando menu');
-            closeMenu();
-        }
-    });
+    let lastScrollY = window.scrollY;
+    let ticking = false;
     
-    // ===== GESTOS TOUCH =====
-    
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchStartTime = 0;
-    
-    // Início do toque
-    document.addEventListener('touchstart', function(e) {
-        if (!isMobileDevice()) return;
-        
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-        touchStartTime = Date.now();
-    }, { passive: true });
-    
-    // Fim do toque
-    document.addEventListener('touchend', function(e) {
-        if (!isMobileDevice()) return;
-        
-        const touchEndX = e.changedTouches[0].clientX;
-        const touchEndY = e.changedTouches[0].clientY;
-        const touchEndTime = Date.now();
-        
-        const deltaX = touchEndX - touchStartX;
-        const deltaY = touchEndY - touchStartY;
-        const deltaTime = touchEndTime - touchStartTime;
-        
-        // Swipe para a direita para abrir menu (apenas na borda esquerda)
-        if (deltaX > 50 && 
-            Math.abs(deltaY) < 100 && 
-            deltaTime < 300 && 
-            touchStartX < 50 && 
-            !isMenuOpen) {
-            debugLog('Swipe para direita detectado - abrindo menu');
-            openMenu();
-        }
-        
-        // Swipe para a esquerda para fechar menu
-        if (deltaX < -50 && 
-            Math.abs(deltaY) < 100 && 
-            deltaTime < 300 && 
-            isMenuOpen) {
-            debugLog('Swipe para esquerda detectado - fechando menu');
-            closeMenu();
-        }
-    }, { passive: true });
-    
-    // ===== EFEITOS VISUAIS =====
-    
-    // Efeito de scroll no header
-    function handleScroll() {
+    function updateScrollEffects() {
+        const currentScrollY = window.scrollY;
         const header = document.querySelector('.header');
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const mobileNav = document.querySelector('.mobile-bottom-nav');
         
+        // Efeito de transparência no header
         if (header) {
-            if (scrollTop > 50) {
+            if (currentScrollY > 50) {
                 header.style.background = 'rgba(255, 255, 255, 0.98)';
-                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
             } else {
                 header.style.background = 'rgba(255, 255, 255, 0.95)';
-                header.style.boxShadow = '';
+                header.style.boxShadow = 'none';
             }
         }
         
-        // Atualiza link ativo baseado na seção visível
-        updateActiveNavLink();
-    }
-    
-    // Atualiza link ativo baseado na seção visível
-    function updateActiveNavLink() {
-        const sections = document.querySelectorAll('section[id]');
-        const scrollPos = window.scrollY + 100;
-        
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.offsetHeight;
-            const sectionId = section.getAttribute('id');
+        // Efeito de hide/show no menu mobile (opcional)
+        if (mobileNav && window.innerWidth <= 768) {
+            const scrollDifference = currentScrollY - lastScrollY;
             
-            if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
-                navLinks.forEach(link => link.classList.remove('active'));
-                
-                const activeLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
-                if (activeLink) {
-                    activeLink.classList.add('active');
-                }
+            if (scrollDifference > 5 && currentScrollY > 100) {
+                // Scrolling down - esconder menu
+                mobileNav.style.transform = 'translateY(100%)';
+            } else if (scrollDifference < -5 || currentScrollY <= 100) {
+                // Scrolling up ou no topo - mostrar menu
+                mobileNav.style.transform = 'translateY(0)';
             }
-        });
-    }
-    
-    // Event listener para scroll
-    window.addEventListener('scroll', handleScroll);
-    
-    // ===== ANIMAÇÕES DE ENTRADA =====
-    
-    // Inicializa elementos animados
-    function initAnimatedElements() {
-        const animatedElements = document.querySelectorAll('.service-card, .advantage-card, .contact-card');
-        
-        animatedElements.forEach(element => {
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(30px)';
-            element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-        });
-    }
-    
-    // Anima elementos ao entrar na viewport
-    function animateOnScroll() {
-        const animatedElements = document.querySelectorAll('.service-card, .advantage-card, .contact-card');
-        
-        animatedElements.forEach(element => {
-            const elementTop = element.getBoundingClientRect().top;
-            const elementVisible = 150;
-            
-            if (elementTop < window.innerHeight - elementVisible) {
-                element.style.opacity = '1';
-                element.style.transform = 'translateY(0)';
-            }
-        });
-    }
-    
-    // ===== EFEITOS PARALLAX =====
-    
-    function handleParallax() {
-        const heroParticles = document.querySelector('.hero-particles');
-        const scrollTop = window.pageYOffset;
-        
-        if (heroParticles) {
-            heroParticles.style.transform = `translateY(${scrollTop * 0.5}px)`;
         }
+        
+        lastScrollY = currentScrollY;
+        ticking = false;
     }
     
-    // Throttle para performance
-    let ticking = false;
-    function requestTick() {
+    function requestScrollUpdate() {
         if (!ticking) {
-            requestAnimationFrame(() => {
-                handleParallax();
-                animateOnScroll();
-                ticking = false;
-            });
+            requestAnimationFrame(updateScrollEffects);
             ticking = true;
         }
     }
     
-    window.addEventListener('scroll', requestTick);
+    // Event listener para scroll
+    window.addEventListener('scroll', requestScrollUpdate, { passive: true });
     
-    // ===== SMOOTH SCROLL PARA BOTÕES =====
-    
-    function initSmoothScroll() {
-        const heroButtons = document.querySelectorAll('.hero-buttons .btn');
+    // Detectar início e fim do scroll
+    window.addEventListener('scroll', function() {
+        isScrolling = true;
         
-        heroButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                
-                if (href && href.startsWith('#')) {
-                    e.preventDefault();
-                    
-                    const targetId = href.substring(1);
-                    const targetElement = document.getElementById(targetId);
-                    
-                    if (targetElement) {
-                        scrollToSection(targetElement);
-                    }
-                }
-            });
-        });
-    }
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(function() {
+            isScrolling = false;
+        }, 150);
+    }, { passive: true });
     
-    // ===== EFEITOS DE HOVER (APENAS DESKTOP) =====
+    console.log('📱 Menu Mobile Fixo: Efeitos de scroll configurados ✅');
+}
+
+// ===== EFEITO RIPPLE =====
+function createRippleEffect(element, event) {
+    const ripple = document.createElement('span');
+    const rect = element.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = event.touches ? event.touches[0].clientX - rect.left : event.clientX - rect.left;
+    const y = event.touches ? event.touches[0].clientY - rect.top : event.clientY - rect.top;
     
-    function initCardEffects() {
-        if (isTouchDevice()) return;
-        
-        const cards = document.querySelectorAll('.service-card, .advantage-card, .contact-card');
-        
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-10px) scale(1.02)';
-                this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = '';
-                this.style.boxShadow = '';
-            });
-        });
-    }
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (x - size / 2) + 'px';
+    ripple.style.top = (y - size / 2) + 'px';
+    ripple.classList.add('ripple-effect');
     
-    // ===== EFEITO RIPPLE NOS BOTÕES =====
+    // CSS para o efeito ripple
+    ripple.style.position = 'absolute';
+    ripple.style.borderRadius = '50%';
+    ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+    ripple.style.transform = 'scale(0)';
+    ripple.style.animation = 'ripple 0.6s linear';
+    ripple.style.pointerEvents = 'none';
     
-    function initRippleEffect() {
-        const buttons = document.querySelectorAll('.btn');
-        
-        buttons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                const ripple = document.createElement('span');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-                
-                ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = x + 'px';
-                ripple.style.top = y + 'px';
-                ripple.classList.add('ripple');
-                
-                this.appendChild(ripple);
-                
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-            });
-        });
-    }
+    element.appendChild(ripple);
     
-    // ===== INICIALIZAÇÃO =====
-    
-    function init() {
-        debugLog('Inicializando sistema de menu mobile...');
-        debugLog('Dispositivo móvel:', isMobileDevice());
-        debugLog('Touch device:', isTouchDevice());
-        debugLog('User Agent:', navigator.userAgent);
-        
-        // Inicializa componentes
-        initAnimatedElements();
-        initSmoothScroll();
-        initCardEffects();
-        initRippleEffect();
-        
-        // Executa scroll inicial
-        handleScroll();
-        
-        debugLog('Sistema inicializado com sucesso! ✅');
-    }
-    
-    // ===== TRATAMENTO DE ERROS =====
-    
-    window.addEventListener('error', function(e) {
-        console.error('❌ Erro no sistema de menu:', e.error);
-    });
-    
-    // ===== PERFORMANCE MONITORING =====
-    
-    if ('performance' in window) {
-        window.addEventListener('load', function() {
-            const loadTime = performance.now();
-            debugLog(`Tempo de carregamento: ${loadTime.toFixed(2)}ms`);
-        });
-    }
-    
-    // ===== INICIALIZAÇÃO FINAL =====
-    
-    // Aguarda um frame para garantir que tudo foi renderizado
-    requestAnimationFrame(() => {
-        init();
-    });
-    
-    // ===== EXPOSIÇÃO GLOBAL PARA DEBUG =====
-    
+    // Remover o elemento após a animação
+    setTimeout(() => {
+        ripple.remove();
+    }, 600);
+}
+
+// ===== UTILITÁRIOS =====
+
+// Função para detectar dispositivo móvel
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+}
+
+// Função para detectar orientação
+function getOrientation() {
+    return window.innerHeight > window.innerWidth ? 'portrait' : 'landscape';
+}
+
+// Função para log de debug
+function debugLog(message, data = null) {
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        window.TechFixMenu = {
-            openMenu,
-            closeMenu,
-            toggleMenu,
-            isMenuOpen: () => isMenuOpen,
-            isAnimating: () => isAnimating,
-            debugLog
-        };
+        console.log(`📱 DEBUG: ${message}`, data || '');
+    }
+}
+
+// ===== EVENT LISTENERS GLOBAIS =====
+
+// Listener para mudanças de orientação
+window.addEventListener('orientationchange', function() {
+    setTimeout(() => {
+        console.log(`📱 Menu Mobile Fixo: Orientação alterada para: ${getOrientation()}`);
         
-        debugLog('Funções de debug expostas em window.TechFixMenu');
+        // Reajustar layout se necessário
+        const mobileNav = document.querySelector('.mobile-bottom-nav');
+        if (mobileNav && isMobileDevice()) {
+            mobileNav.style.display = 'block';
+        }
+    }, 100);
+});
+
+// Listener para redimensionamento da janela
+window.addEventListener('resize', function() {
+    const mobileNav = document.querySelector('.mobile-bottom-nav');
+    const desktopNav = document.querySelector('.nav-menu-desktop');
+    
+    if (window.innerWidth <= 768) {
+        // Modo mobile
+        if (mobileNav) mobileNav.style.display = 'block';
+        if (desktopNav) desktopNav.style.display = 'none';
+        document.body.style.paddingBottom = '80px';
+    } else {
+        // Modo desktop
+        if (mobileNav) mobileNav.style.display = 'none';
+        if (desktopNav) desktopNav.style.display = 'flex';
+        document.body.style.paddingBottom = '0';
+    }
+});
+
+// ===== CSS DINÂMICO PARA ANIMAÇÕES =====
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
     }
     
-    console.log('🎉 TechFix - Sistema de Menu Mobile Carregado com Sucesso!');
-});
+    .mobile-bottom-nav {
+        transition: transform 0.3s ease-out !important;
+    }
+    
+    .mobile-nav-link {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .mobile-nav-link.active::before {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+        50% {
+            opacity: 0.7;
+            transform: translateX(-50%) scale(1.2);
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// ===== INICIALIZAÇÃO FINAL =====
+console.log('📱 Menu Mobile Fixo: Script carregado com sucesso! 🚀');
+
+// Exportar funções para uso global (se necessário)
+window.TechFixMobileNav = {
+    navigateToSection,
+    updateActiveNavItem,
+    isMobileDevice,
+    getOrientation,
+    debugLog
+};
 
